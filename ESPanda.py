@@ -3,7 +3,7 @@ import arrow
 import datetime
 import os
 import re
-import panda
+import pandas as pd
 
 
 from xml.dom.minidom import parse
@@ -58,12 +58,13 @@ while True:
         f.write(str(xmlStr))
         f.close()
 
-        jsoned = os.system("python xml2json.py xml.txt")  
 
-        print jsoned
+        #jsoned = os.system("python xml2json.py xml.txt")
+        jsoned = os.popen("python xml2json.py xml.txt").read()
+        
 
         #See here is where we need to use python, we need to read jsoned(which is a string) into you know, a panada json object.
-        pandas.read_json(jsoned)
+        pandwas = pd.read_json(jsoned)
 
         #jsoned['_index'] = 'Panda'
         #jsoned['_type'] = 'timing' 
