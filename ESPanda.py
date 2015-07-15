@@ -61,10 +61,21 @@ while True:
 
         #jsoned = os.system("python xml2json.py xml.txt")
         jsoned = os.popen("python xml2json.py xml.txt").read()
-        
+        #print jsoned
 
         #See here is where we need to use python, we need to read jsoned(which is a string) into you know, a panada json object.
         pandwas = pd.read_json(jsoned)
+        
+        #print type(pandwas) #<class <'pandas.core.frame.DataFrame'>
+
+        #requestor = pandwas.iat[6,0]    
+        #print requestor
+
+        pandwas = pandwas.drop(pandwas.index[[6,8]])    
+        print pandwas
+
+        print '/////////////////////////////////////////////////////////////////////////'
+        
 
         #jsoned['_index'] = 'Panda'
         #jsoned['_type'] = 'timing' 
