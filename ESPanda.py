@@ -73,8 +73,10 @@ while True:
         #print requestor
 
         pandwas = pandwas.drop(pandwas.index[[6,8]])    
-        pandwas.loc['index'] =  ['Yifan is awesome']
+        pandwas.loc['_index'] =  ['yifan_is_awesome']
+        pandwas.loc['_type'] =  ['timing']
         
+
 
         '''#This was the alternatie soluition where im trying to build a new  dt instead of transposing (and using rf_id as index)
         rq_id = pandwas.loc['RQID']
@@ -94,8 +96,7 @@ while True:
         '''
 
 
-        df_transposed =  pandwas.transpose()    
-        df_transposed =  df_transposed.set_index('RQID')
+        df_transposed =  pandwas.transpose()    #pivot 
 
         listOfDf.append(df_transposed)
 
@@ -105,20 +106,25 @@ while True:
                 
 #Now we append all the df together
 
-appendedDF = listOfDf[0]
+appendedDF = listOfDf[0].to_dict(orient='records')
 
 iterDF = iter(listOfDf)
 next(iterDF)
 
 for x in iterDF:
     print 'Appended: ', x
-    appendedDF = appendedDF.append(x)
+    appendedDF += x.to_dict(orient='records')
+
+
 
 print '@@@@@@@@@@@@@@@@@@@FINAL DF@@@@@@@@@@@@@@@@@@@@@@'
 print appendedDF
 
-jsonedDurelo = appendedDF.to_json()
-print jsonedDurelo
+bulk_records = appendedDF
+print type(bulk_records)
+
+
+print bulk_records
 
         #jsoned['_index'] = 'Panda'
         #jsoned['_type'] = 'timing' 
@@ -129,7 +135,7 @@ print jsonedDurelo
 
         #print df
 
-    #res = bulk(client = es, actions = bulk_records, chunk_size=10000)
+res = bulk(client = es, actions = bulk_records, chunk_size=10000)
     #bulk_records = []
 
 
