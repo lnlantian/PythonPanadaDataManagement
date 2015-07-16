@@ -25,11 +25,12 @@ dsn = '''
     )'''.replace(' ','').replace('\n','').replace('\t','')
  
 db = cx_Oracle.connect(user = USER, password = PASS, dsn = dsn)
+print type(db)
 
 
 
 XMLDATAQuery = '''
-    select  XMLType.GetStringVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 7
+    select  XMLType.GetStringVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 70
 '''
 
 
@@ -46,7 +47,13 @@ bulk_records = []
 listOfDf = []
 
 while True:
-    rows = curs.fetchmany();
+    rows = curs.fetchmany(15)
+    
+    print 'YOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLO'
+    for x in rows:
+        #print x[0]
+
+
     if rows == []:
          break
 
@@ -100,31 +107,27 @@ while True:
 
         listOfDf.append(df_transposed)
 
-        print '/////////////////////////////////////////////////////////////////////////'
-        print df_transposed
-        print '/////////////////////////////////////////////////////////////////////////'
+        #print '/////////////////////////////////////////////////////////////////////////'
+        #print df_transposed
+        #print '/////////////////////////////////////////////////////////////////////////'
                 
 #Now we append all the df together
 
-appendedDF = listOfDf[0].to_dict(orient='records')
+    appendedDF = listOfDf[0].to_dict(orient='records')
 
-iterDF = iter(listOfDf)
-next(iterDF)
+    iterDF = iter(listOfDf)
+    next(iterDF)
 
-for x in iterDF:
-    print 'Appended: ', x
-    appendedDF += x.to_dict(orient='records')
+    for x in iterDF:
+        #print 'Appended: ', x
+        appendedDF += x.to_dict(orient='records')
 
+        #print '@@@@@@@@@@@@@@@@@@@FINAL DF@@@@@@@@@@@@@@@@@@@@@@'
+        #print appendedDF
 
-
-print '@@@@@@@@@@@@@@@@@@@FINAL DF@@@@@@@@@@@@@@@@@@@@@@'
-print appendedDF
-
-bulk_records = appendedDF
-print type(bulk_records)
-
-
-print bulk_records
+    bulk_records = appendedDF
+        #print type(bulk_records)
+        #print bulk_records
 
         #jsoned['_index'] = 'Panda'
         #jsoned['_type'] = 'timing' 
@@ -132,11 +135,11 @@ print bulk_records
         #f.write("%s %s\n" % (arrow.now().strftime("%Y-%m-%d %H:%M:%S"), str(doc['_id'])))        
 
         #bulk_records.append(jsoned)
-.
         #print df
 
-res = bulk(client = es, actions = bulk_records, chunk_size=10000)
-    #bulk_records = []
+    res = bulk(client = es, actions = bulk_records, chunk_size=10000)
+    appendedDF =[]
+    rows = []
 
 
 #xmlFirst = columnNames[0].get('xmltype.getstringval(rq_info)')

@@ -1,13 +1,1 @@
-<REQUEST><RTID>376</RTID><REQUESTOR USERID="70391">Talwinder Kaur</REQUESTOR><RQID>1634765</RQID><SYSTEM>Cater Support</SYSTEM><REQNUM>CATER-2015-00396</REQNUM><SUBMITDATE>2015-07-15</SUBMITDATE><UPD_DATE>2015-07-15</UPD_DATE><PEOPLE></PEOPLE><REQUEST_RELATIONS><RELATED RQ_ID="1340963" STATUS="Production">APP-00323</RELATED></REQUEST_RELATIONS><APPROVALS></APPROVALS><PARITEMS></PARITEMS><CONTAINS_UPLOADS>NO</CONTAINS_UPLOADS><DOCUMENTS></DOCUMENTS><STATUS>Closed</STATUS><REQUESTINFO><FIELD ID="18136" TYPE="TEXTAREA">Changes are made as requested</FIELD><FIELD ID="18114" TYPE="OPTION">CLOSE - All requested work has been completed and confirmation has been provided.</FIELD><FIELD ID="17743" TYPE="TEXT">898</FIELD><FIELD ID="17742" TYPE="OPTION">No</FIELD><FIELD ID="18211" TYPE="PEOPLE"></FIELD><FIELD ID="17741" TYPE="TEXTAREA">Hi,
-For the GTM Trackers database in Cater, please can :
-
-1. Venice be added into the &quot;My Projects&quot; menu drop-down in the &quot;GTM Trackers&quot;.
-
-2. Venice be added into the &quot;Project&quot; field drop-down list in the &quot;GTM Trackers&quot; data entry form.
-
-3. Prague be added into the &quot;My Projects&quot; menu drop-down in the &quot;GTM Trackers&quot;.
-
-4. Prague be added into the &quot;Project&quot; field drop-down list in the &quot;GTM Trackers&quot; data entry form.
-
-Thanks, Alex
-</FIELD><FIELD ID="26191" TYPE="SELECT">Other</FIELD></REQUESTINFO></REQUEST>
+None
