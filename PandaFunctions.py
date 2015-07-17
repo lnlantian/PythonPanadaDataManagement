@@ -30,7 +30,7 @@ def oracleConnection():
 
 def xmlCursor(db, es):
 	XMLDATAQuery = '''
-    	select  XMLType.GetClobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 70
+    	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 70
 	'''
 
 	#select XMLType.GetStringVal(rq_info) from trs.cater_xmlDATA_V3 where data_id = 2143058
@@ -46,8 +46,8 @@ def xmlCursor(db, es):
 	while True:
 	    rows = curs.fetchmany(15)
 	    
-	    print type(rows[0][0].read)	
-
+	    print 'Fight da powa'
+	    
 	    if rows == []:
 	         break
 
@@ -55,13 +55,20 @@ def xmlCursor(db, es):
 	        doc = {
 	            columns[c]: row[c] if type(row[c]) is not cx_Oracle.LOB else row[c].read() for c in range(len(columns))
 	        }
-	        xmlStr =  doc.get('xmltype.getstringval(rq_info)')
+	        xmlStr =  doc.get('xmltype.getclobval(rq_info)')
+
+	    	#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+	    	#print 'Xmlstr Type: ', type(xmlStr)
+	    	#print 'Xmlstr: ', xmlStr
+	    	#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+	    
+
 	        f = open('xml.txt' , 'w')
 	        f.write(str(xmlStr))
 	        f.close()
 	        jsoned = os.popen("python xml2json.py xml.txt").read()
-	        
 	        pandwas = pd.read_json(jsoned)
+
 	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
 	        pandwas.loc['_index'] =  ['yifan_is_awesome']
 	        pandwas.loc['_type'] =  ['timing']

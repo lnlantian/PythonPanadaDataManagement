@@ -50,10 +50,7 @@ while True:
     rows = curs.fetchmany(15)
     
     print 'YOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLO'
-    for x in rows:
-        #print x[0]
-
-
+    
     if rows == []:
          break
 
