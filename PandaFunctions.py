@@ -30,7 +30,7 @@ def oracleConnection():
 
 def xmlCursor(db, es):
 	XMLDATAQuery = '''
-    	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 70
+    	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 360
 	'''
 
 	#select XMLType.GetStringVal(rq_info) from trs.cater_xmlDATA_V3 where data_id = 2143058
@@ -43,26 +43,29 @@ def xmlCursor(db, es):
 
 	listOfDf = []
 
+
 	while True:
-	    rows = curs.fetchmany(15)
+	    rows = curs.fetchmany()
 	    
 	    print 'Fight da powa'
-	    
+	    x = 0
+	    xmlStr = ''
 	    if rows == []:
-	         break
+	   	      break
+
 
 	    for row in rows:
 	        doc = {
-	            columns[c]: row[c] if type(row[c]) is not cx_Oracle.LOB else row[c].read() for c in range(len(columns))
+	            columns[c]: row[c] if type(row[c]) is not cx_Oracle.CLOB else row[c].read() for c in range(len(columns))
 	        }
 	        xmlStr =  doc.get('xmltype.getclobval(rq_info)')
-
+	        x = x + 1
+	        print x
 	    	#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
-	    	#print 'Xmlstr Type: ', type(xmlStr)
+	    	print 'Xmlstr Type: ', type(xmlStr)
 	    	#print 'Xmlstr: ', xmlStr
 	    	#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
 	    
-
 	        f = open('xml.txt' , 'w')
 	        f.write(str(xmlStr))
 	        f.close()
@@ -80,7 +83,6 @@ def xmlCursor(db, es):
 
 	    iterDF = iter(listOfDf)
 	    next(iterDF)
-
 	    for x in iterDF:
 	        appendedDF += x.to_dict(orient='records')
 
@@ -90,6 +92,8 @@ def xmlCursor(db, es):
 	    appendedDF =[]
 	    rows = []
 
+
+	    print 'Written.'
 	db.close()
 
 
