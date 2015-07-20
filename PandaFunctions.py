@@ -38,9 +38,7 @@ def xmlCursor(db, es):
 	curs = db.cursor()
 	curs.execute(XMLDATAQuery)
 	columns = [c[0].lower() for c in curs.description]
-	columnNames = []
 	bulk_records = []
-
 	listOfDf = []
 
 
