@@ -59,6 +59,7 @@ def xmlCursor(db, es):
 	        xmlStr =  doc.get('xmltype.getclobval(rq_info)')
 	        x = x + 1
 	        print x
+	    	
 	    	#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
 	    	print 'Xmlstr Type: ', type(xmlStr)
 	    	#print 'Xmlstr: ', xmlStr
@@ -71,7 +72,7 @@ def xmlCursor(db, es):
 	        pandwas = pd.read_json(jsoned)
 
 	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
-	        pandwas.loc['_index'] =  ['yifan_is_awesome']
+	        pandwas.loc['_index'] =  ['yifan_is_awesome1']
 	        pandwas.loc['_type'] =  ['timing']
 	        df_transposed =  pandwas.transpose()    #pivot 
 
