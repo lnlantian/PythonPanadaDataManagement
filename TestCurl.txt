@@ -1,0 +1,20 @@
+ curl -XPUT localhost:9200/yifan_is_awesome1 -d '
+ {
+
+	"mappings": {
+		"_default_": {
+			"dynamic_templates": [
+				{
+				 "TEMP": {
+					"match": "*",
+					"match_mapping_type": "string",
+					"mapping": {
+								
+								"index" : "not_analyzed"
+								}
+					}        
+				}
+			]
+		}
+	  }   
+}'
