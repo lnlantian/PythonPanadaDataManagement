@@ -149,58 +149,33 @@ def visualizationGen():
 	
 
   	pie = '''
-  	{
-  		"title": "yifan_is_awesome1",
-  		"visState": "{
-  						\"type\":\"pie\",
-  						\"params\":{\"shareYAxis\":true,
-  						\"addTooltip\":true,
-  						\"addLegend\":true,
-  						\"isDonut\":false
-  					},
-  					\"aggs\":
-  						[
-  							{
-  								\"id\":\"1\",
-  								\"type\":\"count\",
-  								\"schema\":\"metric\",
-  								\"params\":{}
-  							},
-  							{
-  								\"id\":\"2\",
-  								\"type\":\"terms\",
-  								\"schema\":\"segment\",
-  								\"params\":
-  								{
-  									\"field\":\"REQUESTOR.#text\",
-  									\"size\":100,\"order\":\"desc\",
-  									\"orderBy\":\"1\"
-  								}
-  							}
-  						],
-  						\"listeners\":{}
-  					}",
-  		"description": "",
-  		"version": 1,
-  		"kibanaSavedObjectMeta": 
-  		{
-    		"searchSourceJSON": "
-    		{
-    			\"index\":\"yifan_is_awesome1\",
-    			\"query\":
-    			{
-    				\"query_string\":
-    				{
-    						\"query\":\"*\",
-    						\"analyze_wildcard\":true
-    				}
-    			},
-    			\"filter\":[]
-    		}"
-  		}
-	}
+    curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2?=pretty -d'
+    {
+        "title":"yifan_is_awesome2",
+        "visState":"{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"REQUESTOR.#text\",\"size\":100,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+        "description":"",
+        "version":1,
+        "kibanaSavedObjectMeta":
+        {
+            "searchSourceJSON":"{\"index\":\"yifan_is_awesome1\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+        }
+    }'  
 	'''
 
+	line = '''
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2.1?=pretty -d'
+	{
+	    "title":"yifan_is_awesome2.1",
+	    "visState":"{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"defaultYExtents\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"SUBMITDATE\",\"interval\":\"week\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+	    "description":"",
+	    "version":1,
+	    "kibanaSavedObjectMeta":
+	    {
+	        "searchSourceJSON":"{\"index\":\"yifan_is_awesome1\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+	    }
+	}'
+	'''
+	
 	verticalBar = '''
 	{
   		"title": "yifan_is_awesome1.1",
@@ -379,37 +354,18 @@ def visualizationGen():
 	'''
 	
 	markdown = '''
+	curl -XPUT http://localhost:9200/.kibana/visualization/Spongebob -d '
 	{
-	"title":"Spongebob",
-	"visState":"
-	{
-		\"type\":\"markdown\",
-		\"params\":
+		"title":"Spongebob",
+		"visState":
+		"{\"type\":\"markdown\",\"params\":{\"markdown\":\"Who lives in a pineapple under the sea\"},\"aggs\":[],\"listeners\":{}}",
+		"description":"",
+		"version":1,
+		"kibanaSavedObjectMeta":
 		{
-			\"markdown\":\"Who lives in a pineapple under the sea"
-		},
-		\"aggs\":[],
-		\"listeners\":{}
-	}",
-	"description":"",
-	"version":1,
-	"kibanaSavedObjectMeta":
-	{
-		"searchSourceJSON":"
-			{
-				\"query\":
-				{
-					\"query_string\":
-					{
-						\"query\":\"*\",
-						\"analyze_wildcard\":true
-					}
-				},
-				\"filter\":[]
-			}"
+			"searchSourceJSON":"{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
 		}
-	}
-	
+	}'
 	'''
 
 
