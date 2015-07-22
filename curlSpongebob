@@ -1,0 +1,12 @@
+curl -XPUT http://localhost:9200/.kibana/visualization/Spongebob -d '
+{
+	"title":"Spongebob",
+	"visState":
+	"{\"type\":\"markdown\",\"params\":{\"markdown\":\"Who lives in a pineapple under the sea, Spongebob Squarepants\"},\"aggs\":[],\"listeners\":{}}",
+	"description":"",
+	"version":1,
+	"kibanaSavedObjectMeta":
+	{
+		"searchSourceJSON":"{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+	}
+}'
