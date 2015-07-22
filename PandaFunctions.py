@@ -9,6 +9,43 @@ from xml.dom.minidom import parse
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, bulk
 
+
+def curlManipulation():
+
+	#You can tottal XDELETE something that doesnt exist
+	curDelete = '''
+		 curl -XDELETE localhost:9200/yifan_is_awesome1
+	'''
+	curDelete = curDelete.replace('\n','').replace('\t','')
+	os.system(curDelete) #make sure curl is installed
+
+	curlCommand = '''
+
+	 curl -XPUT localhost:9200/yifan_is_awesome1 -d '
+	 {
+		"mappings": {
+			"_default_": {
+				"dynamic_templates": [
+					{
+					 "TEMP": {
+						"match": "*",
+						"match_mapping_type": "string",
+						"mapping": {
+									
+									"index" : "not_analyzed"
+									}
+						}        
+					}
+				]
+			}
+		}   
+	}
+	'''
+
+	curlCommand = curlCommand.replace('\n','').replace('\t','')
+	os.system(curlCommand) #make sure curl is installed
+
+
 def oracleConnection():
 	es = Elasticsearch('http://localhost:9200')
 
@@ -27,6 +64,9 @@ def oracleConnection():
 	db = cx_Oracle.connect(user = USER, password = PASS, dsn = dsn)
 
 	return db, es
+
+
+
 
 def xmlCursor(db, es):
 	XMLDATAQuery = '''
@@ -80,7 +120,7 @@ def xmlCursor(db, es):
 
 	    appendedDF = listOfDf[0].to_dict(orient='records')
 
-	    iterDF = iter(listOfDf)
+	    iterDF = iter(listOfDf) 
 	    next(iterDF)
 	    for x in iterDF:
 	        appendedDF += x.to_dict(orient='records')
@@ -94,6 +134,298 @@ def xmlCursor(db, es):
 
 	    print 'Written.'
 	db.close()
+
+def visualizationGen():
+	visualJson =  '''
+  	{
+  		"_index" : ".kibana",
+  		"_type" : "visualization",
+ 		"_id" : "yifan_is_awesome1",
+  		"_version" : 1,
+  		"found" : true,
+  		"_source": %
+  	}
+  	'''
+	
+
+  	pie = '''
+  	{
+  		"title": "yifan_is_awesome1",
+  		"visState": "{
+  						\"type\":\"pie\",
+  						\"params\":{\"shareYAxis\":true,
+  						\"addTooltip\":true,
+  						\"addLegend\":true,
+  						\"isDonut\":false
+  					},
+  					\"aggs\":
+  						[
+  							{
+  								\"id\":\"1\",
+  								\"type\":\"count\",
+  								\"schema\":\"metric\",
+  								\"params\":{}
+  							},
+  							{
+  								\"id\":\"2\",
+  								\"type\":\"terms\",
+  								\"schema\":\"segment\",
+  								\"params\":
+  								{
+  									\"field\":\"REQUESTOR.#text\",
+  									\"size\":100,\"order\":\"desc\",
+  									\"orderBy\":\"1\"
+  								}
+  							}
+  						],
+  						\"listeners\":{}
+  					}",
+  		"description": "",
+  		"version": 1,
+  		"kibanaSavedObjectMeta": 
+  		{
+    		"searchSourceJSON": "
+    		{
+    			\"index\":\"yifan_is_awesome1\",
+    			\"query\":
+    			{
+    				\"query_string\":
+    				{
+    						\"query\":\"*\",
+    						\"analyze_wildcard\":true
+    				}
+    			},
+    			\"filter\":[]
+    		}"
+  		}
+	}
+	'''
+
+	verticalBar = '''
+	{
+  		"title": "yifan_is_awesome1.1",
+  		"visState": "
+  		{
+  			\"type\":\"histogram\",
+  			\"params\":
+  			{
+  				\"shareYAxis\":true,
+  				\"addTooltip\":true,
+  				\"addLegend\":true,
+  				\"mode\":\"stacked\",
+  				\"defaultYExtents\":false
+  			},
+  			\"aggs\":
+  			[
+  				{
+  					\"id\":\"1\",
+  					\"type\":\"count\",
+  					\"schema\":\"metric\",
+  					\"params\":{}
+  				},
+  				{
+  					\"id\":\"2\",
+  					\"type\":\"terms\",
+  					\"schema\":\"segment\",
+  					\"params\":
+  					{
+  						\"field\":\"REQUESTOR.@USERID\",
+  						\"size\":100,\"order\":\"desc\",
+  						\"orderBy\":\"1\"
+  					}
+  				}
+  			],
+  						\"listeners\":{}
+  		}",
+  		"description": "",
+  		"version": 1,
+  		"kibanaSavedObjectMeta": 
+  		{
+    		"searchSourceJSON": "
+    		{
+    			\"index\":\"yifan_is_awesome1\",
+    			\"query\":
+    			{
+    				\"query_string\":
+    				{
+    					\"query\":\"*\",
+    					\"analyze_wildcard\":true
+    				}
+    			},
+    			\"filter\":[]
+    		}"
+  		}
+	}
+	'''
+	
+	areaChart = '''
+	{
+		"title":"yifan_is_awsome1.4",
+		"visState":
+		"{
+			\"type\":\"area\",
+			\"params\":
+			{
+				\"shareYAxis\":true,
+				\"addTooltip\":true,
+				\"addLegend\":true,
+				\"mode\":\"stacked\",
+				\"defaultYExtents\":false
+			},
+			\"aggs\":
+			[
+				{
+					\"id\":\"1\",
+					\"type\":\"count\",
+					\"schema\":\"metric\",
+					\"params\":{}
+				},
+				{
+					\"id\":\"2\",
+					\"type\":\"date_histogram\",
+					\"schema\":\"segment\",
+					\"params\":
+					{
+						\"field\":\"SUBMITDATE\",
+						\"interval\":\"month\",
+						\"min_doc_count\":1,
+						\"extended_bounds\":{}
+					}
+				}
+			],
+			\"listeners\":{}
+		}",
+		"description":"",
+		"version":1,
+		"kibanaSavedObjectMeta":
+		{
+			"searchSourceJSON":"
+			{
+				\"index\":\"yifan_is_awesome1\",
+				\"query\":
+				{
+					\"query_string\":
+					{
+						\"query\":\"*\",
+						\"analyze_wildcard\":true
+					}
+				},\"filter\":[]
+			}"
+		}
+	}
+	'''
+
+
+
+
+	moreComplexLineChart = '''
+	{
+  		"title": "yifan_is_awesome1.6",
+  		"visState": "
+  		{
+  			\"type\":\"line\",
+  			\"params\":
+  			{
+  				\"shareYAxis\":true,
+  				\"addTooltip\":true,
+  				\"addLegend\":true,
+  				\"defaultYExtents\":false
+  			},
+  			\"aggs\":
+  			[
+  				{
+  					\"id\":\"1\",
+  					\"type\":\"cardinality\",
+  					\"schema\":\"metric\",
+  					\"params\":
+  					{
+  						\"field\":\"REQNUM\"
+  					}
+  				},
+  				{
+  					\"id\":\"2\",
+  					\"type\":\"terms\",
+  					\"schema\":\"segment\",
+  					\"params\":
+  					{
+  						\"field\":\"REQUESTOR.#text\",
+  						\"size\":5,
+  						\"order\":\"desc\",
+  						\"orderBy\":\"1\"
+  					}
+  				}
+  			],
+  			\"listeners\":{}
+  		}",
+  		"description": "",
+  		"version": 1,
+  		"kibanaSavedObjectMeta": 
+  		{
+    		"searchSourceJSON": "
+    		{
+    			\"index\":\"yifan_is_awesome1\",
+    			\"query\":
+    			{
+    				\"query_string\":
+    				{
+    					\"query\":\"*\",
+    					\"analyze_wildcard\":true
+    				}
+    			},
+    			\"filter\":[]
+    		}"
+  		}
+	}
+	'''
+	
+	markdown = '''
+	{
+	"title":"Spongebob",
+	"visState":"
+	{
+		\"type\":\"markdown\",
+		\"params\":
+		{
+			\"markdown\":\"Who lives in a pineapple under the sea"
+		},
+		\"aggs\":[],
+		\"listeners\":{}
+	}",
+	"description":"",
+	"version":1,
+	"kibanaSavedObjectMeta":
+	{
+		"searchSourceJSON":"
+			{
+				\"query\":
+				{
+					\"query_string\":
+					{
+						\"query\":\"*\",
+						\"analyze_wildcard\":true
+					}
+				},
+				\"filter\":[]
+			}"
+		}
+	}
+	
+	'''
+
+
+def dashboardGen():
+	#Version refers to : everytimeyou save there is a new version
+
+	dashboardGen = '''
+	{
+		"_index" : ".kibana",
+  		"_type" : "dashboard",
+  		"_id" : "yifan_is_awesome1",
+  		"_version" : 4,
+  		"found" : true,
+  		"_source":%
+  	}
+  	'''
 
 
 def main():

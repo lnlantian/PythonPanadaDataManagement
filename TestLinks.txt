@@ -1,3 +1,4 @@
 http://localhost:9200/yifan_is_awesome1?=pretty
-http://localhost:9200/.kibana/visualization/yifan_is_awesome1.1?=pretty
+http://localhost:9200/.kibana/visualization/yifan_is_awesome1.1?=pretty --Is deleted
+http://localhost:9200/.kibana/visualization/yifan_is_awesome1?=pretty
 http://localhost:9200/.kibana/dashboard/yifan_is_awesome1?=pretty

@@ -1,3 +1,6 @@
+
+ curl -XDELETE localhost:9200/yifan_is_awesome1
+
  curl -XPUT localhost:9200/yifan_is_awesome1 -d '
  {
 
