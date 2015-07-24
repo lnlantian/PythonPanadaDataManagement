@@ -1,0 +1,29 @@
+           CONTAINS_UPLOADS     DOCUMENTS  \
+format                  NaN           NaN   
+index          not_analyzed  not_analyzed   
+properties              NaN           NaN   
+type                 string        string   
+
+                                                       PEOPLE        REQNUM  \
+format                                                    NaN           NaN   
+index                                                     NaN  not_analyzed   
+properties  {u'ASSIGNED': {u'properties': {u'#text': {u'in...           NaN   
+type                                                      NaN        string   
+
+                                                    REQUESTOR          RQID  \
+format                                                    NaN           NaN   
+index                                                     NaN  not_analyzed   
+properties  {u'#text': {u'index': u'not_analyzed', u'type'...           NaN   
+type                                                      NaN        string   
+
+                    RTID        STATUS        SUBMITDATE        SYSTEM  \
+format               NaN           NaN  dateOptionalTime           NaN   
+index       not_analyzed  not_analyzed               NaN  not_analyzed   
+properties           NaN           NaN               NaN           NaN   
+type              string        string              date        string   
+
+                    UPD_DATE  
+format      dateOptionalTime  
+index                    NaN  
+properties               NaN  
+type                    date  

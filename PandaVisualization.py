@@ -4,11 +4,13 @@ import datetime
 import os
 import re
 import pandas as pd
+import json
+import unicodedata
 
 from xml.dom.minidom import parse
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, bulk
-from IPython.display import display, HTML
+from pandas.io.json import json_normalize
 
 def oracleConnection():
 	es = Elasticsearch('http://localhost:9200')
@@ -100,12 +102,25 @@ def retrieveTypes():
 	curlRetrieve = curlRetrieve.replace('\n','').replace('\t','')
 
 	#print curlRetrieve
-	jsonOutput = os.popen(curlRetrieve).read() #make sure curl is installed
-	#print jsonOutput
+	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
 
-	pandwas = pd.read_json(jsonOutput, typ='series')
-		
-	print pandwas
+	jsonOutput = json.loads(strOutput)
+
+	#print jsonOutput['yifan_is_awesome1']
+	levelOne = jsonOutput['yifan_is_awesome1']
+	levelTwo = 	levelOne['mappings']
+	levelThree = levelTwo['timing']
+	levelFour = levelThree['properties']
+	
+	listofKeys = []
+
+	for key in levelFour:
+		print type(key)
+
+		listofKeys.append(str(key))
+	
+
+	print listofKeys
 	#mappings = pandwas.loc['mappings']
 	#print mappings
 	
