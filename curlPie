@@ -1,6 +1,6 @@
-    curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2?=pretty -d'
+    curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome3?=pretty -d'
     {
-        "title":"yifan_is_awesome2",
+        "title":"yifan_is_awesome3",
         "visState":"{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"REQUESTOR.#text\",\"size\":100,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
         "description":"",
         "version":1,
