@@ -149,6 +149,13 @@ def retrieveTypes():
 		curlDoc = curlDoc.replace('\n','').replace('\t','')
 		os.system(curlDoc)
 
+def dashBoardGeneration():
+	#sommething happens here
+	a = 1
+
+
+
+
 
 def main():
 	db, es = oracleConnection()
