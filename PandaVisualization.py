@@ -5,12 +5,10 @@ import os
 import re
 import pandas as pd
 import json
-import unicodedata
 
 from xml.dom.minidom import parse
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, bulk
-from pandas.io.json import json_normalize
 
 def oracleConnection():
 	es = Elasticsearch('http://localhost:9200')
@@ -101,13 +99,24 @@ def retrieveTypes():
 	curlRetrieve = 'curl -XGET http://localhost:9200/yifan_is_awesome1/_mappings/timing'
 	curlRetrieve = curlRetrieve.replace('\n','').replace('\t','')
 
-	#print curlRetrieve
+	curlTemplate = 	'''    
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_% -d'
+    {
+        "title":"yifan_test_pie_%",
+        "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
+        "description":"",
+        "version":1,
+        "kibanaSavedObjectMeta":
+        {
+            "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+        }
+    }'   
+    '''
 	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
-
 	jsonOutput = json.loads(strOutput)
+	#curlTemplate = curlTemplate.replace('\n','').replace('\t','')
 
-	#print jsonOutput['yifan_is_awesome1']
-	levelOne = jsonOutput['yifan_is_awesome1']
+	levelOne = jsonOutput['yifan_is_awesome1'] #non-static
 	levelTwo = 	levelOne['mappings']
 	levelThree = levelTwo['timing']
 	levelFour = levelThree['properties']
@@ -115,17 +124,30 @@ def retrieveTypes():
 	listofKeys = []
 
 	for key in levelFour:
-		print type(key)
+		##################### 
+		#TO-DO
+		#####################
+
+		#make sure we go deeper, check to see if the next child 
+
 
 		listofKeys.append(str(key))
 	
-
 	print listofKeys
-	#mappings = pandwas.loc['mappings']
-	#print mappings
+
+
+	#curlDoc = curlTemplate.replace('%',listofKeys[0]).replace('@', 'yifan_test_pie_'+listofKeys[0])
+
+	#f = open('workfile.txt', 'w')
+	#f.write(curlDoc)
+	#f.close()
 	
-	
-	#print output
+
+	for key in listofKeys:
+		print 'yifan_test_pie_'+key
+		curlDoc = curlTemplate.replace('%',key).replace('@', 'yifan_test_pie_'+key)
+		curlDoc = curlDoc.replace('\n','').replace('\t','')
+		os.system(curlDoc)
 
 
 def main():
