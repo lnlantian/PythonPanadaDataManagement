@@ -14,14 +14,14 @@ def curlManipulation():
 
 	#You can tottal XDELETE something that doesnt exist
 	curDelete = '''
-		 curl -XDELETE localhost:9200/yifan_is_awesome1
+		 curl -XDELETE localhost:9200/yifan_is_awesome_rtid_3
 	'''
 	curDelete = curDelete.replace('\n','').replace('\t','')
 	os.system(curDelete) #make sure curl is installed
 
 	curlCommand = '''
 
-	 curl -XPUT localhost:9200/yifan_is_awesome1 -d '
+	 curl -XPUT localhost:9200/yifan_is_awesome_rtid_3 -d '
 	 {
 		"mappings": {
 			"_default_": {
@@ -70,8 +70,12 @@ def oracleConnection():
 
 def xmlCursor(db, es):
 	XMLDATAQuery = '''
-    	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 360
+    	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 3 and Last_UPDATED >= sysdate - 360
 	'''
+
+	#'''
+    #	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 360
+	#'''
 
 	#select XMLType.GetStringVal(rq_info) from trs.cater_xmlDATA_V3 where data_id = 2143058
 
@@ -107,7 +111,7 @@ def xmlCursor(db, es):
 	        pandwas = pd.read_json(jsoned)
 
 	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
-	        pandwas.loc['_index'] =  ['yifan_is_awesome1']
+	        pandwas.loc['_index'] =  ['yifan_is_awesome_rtid_3']
 	        pandwas.loc['_type'] =  ['timing']
 	        df_transposed =  pandwas.transpose()    #pivot 
 
@@ -203,7 +207,10 @@ def dashboardGen():
 
 
 def main():
+	curlManipulation()
+	print "Curl Added"
 	db, es = oracleConnection()
+	print "Oracle Connection Made"
 	xmlCursor(db, es)
 
 if __name__ == "__main__":

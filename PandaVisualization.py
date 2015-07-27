@@ -71,7 +71,7 @@ def xmlCursor(db, es):
 	        pandwas = pd.read_json(jsoned)
 
 	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
-	        pandwas.loc['_index'] =  ['yifan_is_awesome1']
+	        pandwas.loc['_index'] =  ['yifan_is_awesome_rtid_3']
 	        pandwas.loc['_type'] =  ['timing']
 	        df_transposed =  pandwas.transpose()    #pivot 
 
@@ -96,27 +96,44 @@ def xmlCursor(db, es):
 
 
 def retrieveTypes():
-	curlRetrieve = 'curl -XGET http://localhost:9200/yifan_is_awesome1/_mappings/timing'
+	curlRetrieve = 'curl -XGET http://localhost:9200/yifan_is_awesome_rtid_3/_mappings/timing'
 	curlRetrieve = curlRetrieve.replace('\n','').replace('\t','')
 
 	curlTemplate = 	'''    
-	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_3_% -d'
     {
-        "title":"yifan_test_pie_%",
+        "title":"yifan_test_pie_3_%",
         "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
         "description":"",
         "version":1,
         "kibanaSavedObjectMeta":
         {
-            "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+            "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome_rtid_3\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
         }
     }'   
     '''
+
+
+    curlLine = '''
+    curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_line_3_% -d'
+	{
+	    "title":yifan_test_line_3_%",
+	    "visState":"{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"defaultYExtents\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"SUBMITDATE\",\"interval\":\"week\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+	    "description":"",
+	    "version":1,
+	    "kibanaSavedObjectMeta":
+	    {
+	        "searchSourceJSON":"{\"index\":\"yifan_is_awesome1\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+	    }
+	}'
+	'''
+
+
 	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
 	jsonOutput = json.loads(strOutput)
 	#curlTemplate = curlTemplate.replace('\n','').replace('\t','')
 
-	levelOne = jsonOutput['yifan_is_awesome1'] #non-static
+	levelOne = jsonOutput['yifan_is_awesome_rtid_3'] #non-static
 	levelTwo = 	levelOne['mappings']
 	levelThree = levelTwo['timing']
 	levelFour = levelThree['properties']

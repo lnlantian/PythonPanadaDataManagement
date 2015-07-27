@@ -49,8 +49,6 @@ listOfDf = []
 while True:
     rows = curs.fetchmany(15)
     
-    print 'YOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLOYOLO'
-    
     if rows == []:
          break
 
