@@ -128,6 +128,13 @@ def retrieveTypes():
 	}'
 	'''
 
+	curlHistogram = '''
+	'''
+
+	curl area= '''
+	'''
+
+
 
 	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
 	jsonOutput = json.loads(strOutput)
