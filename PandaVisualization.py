@@ -114,6 +114,7 @@ def retrieveTypes():
     '''
 
 
+
     curlLine = '''
     curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_line_3_% -d'
 	{
