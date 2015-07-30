@@ -164,20 +164,23 @@ def retrieveTypes():
 		#Still thinking of way, but at this point might just leave it as it is
 		#####################
 
-			temp =  levelFour[str(key)]
-			print temp
-
-
-
-
+			#temp = levelFour[str(key)]
+			#print temp
 			listofKeys.append(str(key))
 	
 	print listofKeys
 
 	for key in listofKeys:
 		print 'yifan_test_pie_'+key
+		
 		curlDoc = curlTemplate.replace('%',key).replace('@', 'yifan_test_pie_'+key)
+		curlDocLine = curlLine.replace('%',key).replace('@', 'yifan_test_line_'+key)
+		curlDocArea = curlArea.replace('%',key).replace('@', 'yifan_test_area_'+key)
+		
 		curlDoc = curlDoc.replace('\n','').replace('\t','')
+		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
+		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
+
 		os.system(curlDoc)
 
 def dashBoardGeneration():
