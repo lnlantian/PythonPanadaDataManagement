@@ -161,11 +161,12 @@ def retrieveTypes():
 		##################### 
 		#TO-DO
 		#make sure we go deeper, check to see if the next child 
+		#Still thinking of way, but at this point might just leave it as it is
 		#####################
 
 			temp =  levelFour[str(key)]
 			print temp
-			
+
 
 
 
