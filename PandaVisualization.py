@@ -94,52 +94,7 @@ def xmlCursor(db, es):
 	    print 'Written.'
 	db.close()
 
-curlTemplate = 	'''    
-curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_3_% -d'
-{
-    "title":"yifan_test_pie_3_%",
-    "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
-    "description":"",
-    "version":1,
-    "kibanaSavedObjectMeta":
-    {
-        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome_rtid_3\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-    }
-}'   
-'''
 
-
-
-curlLine = '''
-curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_line_3_% -d'
-{
-    "title":yifan_test_line_3_%",
-    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
-    "description":"",
-    "version":1,
-    "kibanaSavedObjectMeta":
-    {
-        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-    }
-}'
-'''
-
-curlHistogram = '''
-'''
-
-curlArea= '''
-curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_area_3_% -d'
-{
-	"title":"yifan_test_area_3_%",
-	"visState":"{\\"type\\":\\"area\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"month\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
-	"description":"",
-	"version":1,
-	"kibanaSavedObjectMeta":
-	{
-		"searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-	}
-}'
-'''
 
 
 def retrieveTypes():
@@ -148,7 +103,6 @@ def retrieveTypes():
 
 	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
 	jsonOutput = json.loads(strOutput)
-	#curlTemplate = curlTemplate.replace('\n','').replace('\t','')
 
 	levelOne = jsonOutput['yifan_is_awesome_rtid_3'] #non-static
 	levelTwo = 	levelOne['mappings']
@@ -170,18 +124,68 @@ def retrieveTypes():
 	
 	print listofKeys
 
-	for key in listofKeys:
-		print 'yifan_test_pie_'+key
-		
-		curlDoc = curlTemplate.replace('%',key).replace('@', 'yifan_test_pie_'+key)
-		curlDocLine = curlLine.replace('%',key).replace('@', 'yifan_test_line_'+key)
-		curlDocArea = curlArea.replace('%',key).replace('@', 'yifan_test_area_'+key)
-		
-		curlDoc = curlDoc.replace('\n','').replace('\t','')
-		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
-		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
 
-		os.system(curlDoc)
+def pieGraphGeneration(listOfKeys):
+	curlPie = 	'''    
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_3_% -d'
+	{
+	    "title":"yifan_test_pie_3_%",
+	    "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
+	    "description":"",
+	    "version":1,
+	    "kibanaSavedObjectMeta":
+	    {
+	        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome_rtid_3\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+	    }
+	}'   
+	'''
+	for key in listofKeys:
+		pieKey ='yifan_test_pie_'+key		
+		curlDocPie = curlPie.replace('%',key).replace('@', pieKey)		
+		curlDocPie = curlDoc.replace('\n','').replace('\t','')
+		os.system(curlDocPie)
+
+
+def lineGraphGeneration(listOfKeys):
+	curlLine = '''
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_line_3_% -d'
+	{
+	    "title":yifan_test_line_3_%",
+	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
+	    "description":"",
+	    "version":1,
+	    "kibanaSavedObjectMeta":
+	    {
+	        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+	    }
+	}'
+	'''
+	for key in listofKeys:
+		lineKey ='yifan_test_line_'+key
+		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
+		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
+		os.system(curlDocLine)
+
+def areaGraphGeneration(listOfKeys):
+	curlArea= '''
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_area_3_% -d'
+	{
+		"title":"yifan_test_area_3_%",
+		"visState":"{\\"type\\":\\"area\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"month\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
+		"description":"",
+		"version":1,
+		"kibanaSavedObjectMeta":
+		{
+			"searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+		}
+	}'
+	'''
+	for key in listofKeys:
+		areaKey ='yifan_test_area_'+key
+		curlDocArea = curlArea.replace('%',key).replace('@', areaKey)	
+		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
+		os.system(curlDocArea)
+
 
 def dashBoardGeneration():
 	#sommething happens here
