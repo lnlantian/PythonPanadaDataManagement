@@ -96,7 +96,7 @@ def xmlCursor(db, es):
 
 
 
-
+#we need some paramaters in this
 def retrieveTypes():
 	curlRetrieve = 'curl -XGET http://localhost:9200/yifan_is_awesome_rtid_3/_mappings/timing'
 	curlRetrieve = curlRetrieve.replace('\n','').replace('\t','')
@@ -118,11 +118,11 @@ def retrieveTypes():
 		#Still thinking of way, but at this point might just leave it as it is
 		#####################
 
-			#temp = levelFour[str(key)]
-			#print temp
-			listofKeys.append(str(key))
+		#temp = levelFour[str(key)]
+		#print temp
+		listofKeys.append(str(key))
 	
-	print listofKeys
+	return listofKeys
 
 
 def pieGraphGeneration(listOfKeys):
@@ -139,11 +139,18 @@ def pieGraphGeneration(listOfKeys):
 	    }
 	}'   
 	'''
+
+	listofPieKeys =[]
+
 	for key in listofKeys:
-		pieKey ='yifan_test_pie_'+key		
+		pieKey ='yifan_test_pie_'+key	
+		listofPieKeys.append(PieKey)
+
 		curlDocPie = curlPie.replace('%',key).replace('@', pieKey)		
 		curlDocPie = curlDoc.replace('\n','').replace('\t','')
 		os.system(curlDocPie)
+
+	return listofPieKeys
 
 
 def lineGraphGeneration(listOfKeys):
@@ -160,11 +167,20 @@ def lineGraphGeneration(listOfKeys):
 	    }
 	}'
 	'''
+
+	listofLineKeys =[]
+	
 	for key in listofKeys:
+	
 		lineKey ='yifan_test_line_'+key
+		listofLineKeys.append(lineKey)
+
 		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
 		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
 		os.system(curlDocLine)
+
+
+	return listofLineKeys
 
 def areaGraphGeneration(listOfKeys):
 	curlArea= '''
@@ -180,11 +196,34 @@ def areaGraphGeneration(listOfKeys):
 		}
 	}'
 	'''
+	
+	listofAreaKeys =[]
+
 	for key in listofKeys:
 		areaKey ='yifan_test_area_'+key
+
+		listofAreaKeys.append(areaKey)
+
 		curlDocArea = curlArea.replace('%',key).replace('@', areaKey)	
 		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
 		os.system(curlDocArea)
+
+	return listofAreaKeys
+
+
+#Controlls the visulatution to create
+def visualizationGeneration():
+	listOfKeys = retrieveTypes()
+
+	listofAreaKeys = areaGraphGeneration(listOfKeys)
+	#listofLineKeys = lineGraphGeneration(listOfKeys)
+	#listofPieKeys = pieGraphGeneration(listOfKeys)
+	
+	############################
+	#TD: some thing that appends the list of keys
+	############################
+	
+	return listOfGraphs
 
 
 def dashBoardGeneration():
@@ -198,7 +237,8 @@ def dashBoardGeneration():
 def main():
 	db, es = oracleConnection()
 	print 'You are connected baby!'
-	retrieveTypes()
+	listOfGraphs = visualizationGeneration()
+	dashBoardGeneration(listOfGraphs)
 
 
 if __name__ == "__main__":
