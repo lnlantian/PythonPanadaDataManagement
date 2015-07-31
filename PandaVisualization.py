@@ -125,7 +125,7 @@ def retrieveTypes():
 	return listofKeys
 
 
-def pieGraphGeneration(listOfKeys):
+def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlPie = 	'''    
 	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_3_% -d'
 	{
@@ -153,7 +153,7 @@ def pieGraphGeneration(listOfKeys):
 	return listofPieKeys
 
 
-def lineGraphGeneration(listOfKeys):
+def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlLine = '''
 	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_line_3_% -d'
 	{
@@ -182,7 +182,7 @@ def lineGraphGeneration(listOfKeys):
 
 	return listofLineKeys
 
-def areaGraphGeneration(listOfKeys):
+def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlArea= '''
 	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_area_3_% -d'
 	{
@@ -228,7 +228,22 @@ def visualizationGeneration():
 
 def dashBoardGeneration():
 	#sommething happens here
-	a = 1
+	dashboardGen = '''
+	{
+		"_index" : ".kibana",
+  		"_type" : "dashboard",
+  		"_id" : "yifan_is_awesome1",
+  		"_version" : 4,
+  		"found" : true,
+  		"_source":%
+  	}
+  	'''
+
+
+
+
+#This is obviously temporery until we figure better  ways to load information tinto code
+def userInput():
 
 
 

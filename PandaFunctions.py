@@ -134,83 +134,12 @@ def xmlCursor(db, es):
 	    print 'Written.'
 	db.close()
 
-def visualizationGen():
-	visualJson =  '''
-  	{
-  		"_index" : ".kibana",
-  		"_type" : "visualization",
- 		"_id" : "yifan_is_awesome1",
-  		"_version" : 1,
-  		"found" : true,
-  		"_source": %
-  	}
-  	'''
-	
-
-  	pie = '''
-    curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2?=pretty -d'
-    {
-        "title":"yifan_is_awesome2",
-        "visState":"{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"REQUESTOR.#text\",\"size\":100,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-        "description":"",
-        "version":1,
-        "kibanaSavedObjectMeta":
-        {
-            "searchSourceJSON":"{\"index\":\"yifan_is_awesome1\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-        }
-    }'  
-	'''
-
-	line = '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2.1?=pretty -d'
-	{
-	    "title":"yifan_is_awesome2.1",
-	    "visState":"{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"defaultYExtents\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"SUBMITDATE\",\"interval\":\"week\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
-	    "description":"",
-	    "version":1,
-	    "kibanaSavedObjectMeta":
-	    {
-	        "searchSourceJSON":"{\"index\":\"yifan_is_awesome1\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-	    }
-	}'
-	'''
-	
-	markdown = '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/Spongebob -d '
-	{
-		"title":"Spongebob",
-		"visState":
-		"{\"type\":\"markdown\",\"params\":{\"markdown\":\"Who lives in a pineapple under the sea\"},\"aggs\":[],\"listeners\":{}}",
-		"description":"",
-		"version":1,
-		"kibanaSavedObjectMeta":
-		{
-			"searchSourceJSON":"{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
-		}
-	}'
-	'''
-
-
-def dashboardGen():
-	#Version refers to : everytimeyou save there is a new version
-
-	dashboardGen = '''
-	{
-		"_index" : ".kibana",
-  		"_type" : "dashboard",
-  		"_id" : "yifan_is_awesome1",
-  		"_version" : 4,
-  		"found" : true,
-  		"_source":%
-  	}
-  	'''
-
 
 def main():
 	curlManipulation()
 	print "Curl Added"
 	db, es = oracleConnection()
-	print "Oracle Connection Made"
+	print "Oracle Connection M"
 	xmlCursor(db, es)
 
 if __name__ == "__main__":
