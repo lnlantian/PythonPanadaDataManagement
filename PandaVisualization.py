@@ -127,22 +127,22 @@ def retrieveTypes():
 
 def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlPie = 	'''    
-	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_pie_3_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
 	{
-	    "title":"yifan_test_pie_3_%",
+	    "title":"{0}_%",
 	    "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
 	    "description":"",
 	    "version":1,
 	    "kibanaSavedObjectMeta":
 	    {
-	        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome_rtid_3\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+	        "searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
 	    }
 	}'   
-	'''
+	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 	listofPieKeys =[]
 
-	for key in listofKeys:
+	for key in listOfKeys:
 		pieKey ='yifan_test_pie_'+key	
 		listofPieKeys.append(PieKey)
 
@@ -155,22 +155,22 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlLine = '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_line_3_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
 	{
-	    "title":yifan_test_line_3_%",
+	    "title":{0}_%",
 	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
 	    "description":"",
 	    "version":1,
 	    "kibanaSavedObjectMeta":
 	    {
-	        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+	        "searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
 	    }
 	}'
-	'''
+	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 	listofLineKeys =[]
 	
-	for key in listofKeys:
+	for key in listOfKeys:
 	
 		lineKey ='yifan_test_line_'+key
 		listofLineKeys.append(lineKey)
@@ -184,22 +184,22 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlArea= '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_test_area_3_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
 	{
-		"title":"yifan_test_area_3_%",
+		"title":"{0}_%",
 		"visState":"{\\"type\\":\\"area\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"month\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
 		"description":"",
 		"version":1,
 		"kibanaSavedObjectMeta":
 		{
-			"searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+			"searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
 		}
 	}'
-	'''
+	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 	
 	listofAreaKeys =[]
 
-	for key in listofKeys:
+	for key in listOfKeys:
 		areaKey ='yifan_test_area_'+key
 
 		listofAreaKeys.append(areaKey)
@@ -215,20 +215,24 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 def visualizationGeneration():
 	listOfKeys = retrieveTypes()
 
-	listofAreaKeys = areaGraphGeneration(listOfKeys)
+	listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
 	#listofLineKeys = lineGraphGeneration(listOfKeys)
 	#listofPieKeys = pieGraphGeneration(listOfKeys)
 	
 	############################
 	#TD: some thing that appends the list of keys
 	############################
-	
+	listOfGraphs = listofAreaKeys 
+
+
 	return listOfGraphs
 
+	
 
-def dashBoardGeneration():
+def dashBoardGeneration(listOfGraphs):
 	#sommething happens here
 	dashboardGen = '''
+	curl -XPUT http://localhost:9200/.kibana/dashboard/yifan_is_awesome1?=pretty -d'
 	{
 		"_index" : ".kibana",
   		"_type" : "dashboard",
@@ -236,17 +240,13 @@ def dashBoardGeneration():
   		"_version" : 4,
   		"found" : true,
   		"_source":%
-  	}
+  	}'
   	'''
 
-
+  	
 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
-def userInput():
-
-
-
 
 
 def main():
