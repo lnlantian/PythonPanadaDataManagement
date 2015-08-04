@@ -243,7 +243,13 @@ def dashBoardGeneration(listOfGraphs):
   	}'
   	'''
 
-  	
+  	sourceGen = '''
+  	{"title":"yifan_is_awesome1","hits":0,"description":"","panelsJSON":"[
+  	{1}
+  	]","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"}
+  	}
+  	'''
+
 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
