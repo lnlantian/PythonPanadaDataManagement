@@ -29,73 +29,6 @@ def oracleConnection():
 
 	return db, es
 
-
-
-
-def xmlCursor(db, es):
-	XMLDATAQuery = '''
-    	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 360
-	'''
-
-	#select XMLType.GetStringVal(rq_info) from trs.cater_xmlDATA_V3 where data_id = 2143058
-
-	curs = db.cursor()
-	curs.execute(XMLDATAQuery)
-	columns = [c[0].lower() for c in curs.description]
-	bulk_records = []
-	listOfDf = []
-
-
-	while True:
-	    rows = curs.fetchmany()
-	    
-	    print 'Fight da powa'
-	    x = 0
-	    xmlStr = ''
-	    if rows == []:
-	   	      break
-
-
-	    for row in rows:
-	        doc = {
-	            columns[c]: row[c] if type(row[c]) is not cx_Oracle.CLOB else row[c].read() for c in range(len(columns))
-	        }
-	        xmlStr =  doc.get('xmltype.getclobval(rq_info)')
-	        x = x + 1
-	        print x
-
-	        f = open('xml.txt' , 'w')
-	        f.write(str(xmlStr))
-	        f.close()
-	        jsoned = os.popen("python xml2json.py xml.txt").read()
-	        pandwas = pd.read_json(jsoned)
-
-	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
-	        pandwas.loc['_index'] =  ['yifan_is_awesome_rtid_3']
-	        pandwas.loc['_type'] =  ['timing']
-	        df_transposed =  pandwas.transpose()    #pivot 
-
-	        listOfDf.append(df_transposed)
-
-	    appendedDF = listOfDf[0].to_dict(orient='records')
-
-	    iterDF = iter(listOfDf) 
-	    next(iterDF)
-	    for x in iterDF:
-	        appendedDF += x.to_dict(orient='records')
-
-	    bulk_records = appendedDF
-
-	    res = bulk(client = es, actions = bulk_records, chunk_size=10000)
-	    appendedDF =[]
-	    rows = []
-
-
-	    print 'Written.'
-	db.close()
-
-
-
 #we need some paramaters in this
 def retrieveTypes():
 	curlRetrieve = 'curl -XGET http://localhost:9200/yifan_is_awesome_rtid_3/_mappings/timing'
@@ -143,11 +76,11 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofPieKeys =[]
 
 	for key in listOfKeys:
-		pieKey ='yifan_test_pie_'+key	
-		listofPieKeys.append(PieKey)
+		pieKey =nameOfVisualization+'_'+key	
+		listofPieKeys.append(pieKey)
 
 		curlDocPie = curlPie.replace('%',key).replace('@', pieKey)		
-		curlDocPie = curlDoc.replace('\n','').replace('\t','')
+		curlDocPie = curlDocPie.replace('\n','').replace('\t','')
 		os.system(curlDocPie)
 
 	return listofPieKeys
@@ -168,16 +101,33 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	}'
 	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
+
+	'''
+	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2.1?=pretty -d'
+	{
+	    "title":"yifan_is_awesome2.1",
+	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
+	    "description":"",
+	    "version":1,
+	    "kibanaSavedObjectMeta":
+	    {
+	        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+	    }
+	}'
+	'''
+
 	listofLineKeys =[]
 	
 	for key in listOfKeys:
-	
-		lineKey ='yifan_test_line_'+key
+		lineKey =nameOfVisualization+'_'+key
+		
 		listofLineKeys.append(lineKey)
 
 		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
 		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
+
 		os.system(curlDocLine)
+		print curlDocLine #Figure out why these arnt adding
 
 
 	return listofLineKeys
@@ -200,13 +150,13 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofAreaKeys =[]
 
 	for key in listOfKeys:
-		areaKey ='yifan_test_area_'+key
+		areaKey =nameOfVisualization+'_'+key
 
 		listofAreaKeys.append(areaKey)
 
 		curlDocArea = curlArea.replace('%',key).replace('@', areaKey)	
 		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
-		os.system(curlDocArea)
+		os.system(curlDocArea) 
 
 	return listofAreaKeys
 
@@ -215,15 +165,23 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 def visualizationGeneration():
 	listOfKeys = retrieveTypes()
 
-	listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
-	#listofLineKeys = lineGraphGeneration(listOfKeys)
-	#listofPieKeys = pieGraphGeneration(listOfKeys)
+	#listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
+	listofLineKeys = lineGraphGeneration(listOfKeys, 'yifan_test_line_3','yifan_is_awesome1')
+	#listofPieKeys = pieGraphGeneration(listOfKeys, 'yifan_test_pie_3','yifan_is_awesome1')
 	
 	############################
 	#TD: some thing that appends the list of keys
 	############################
-	listOfGraphs = listofAreaKeys 
+	listOfGraphs = []
+	#listOfGraphs.append(listofAreaKeys)
+	listOfGraphs.append(listofLineKeys)
+	#listOfGraphs.append(listofPieKeys)
 
+	print 'visualizationGeneration: '
+
+	print 'listOfGraphs: '
+	print listOfGraphs
+	print 'len: ', len(listOfGraphs)
 
 	return listOfGraphs
 
@@ -232,25 +190,69 @@ def visualizationGeneration():
 def dashBoardGeneration(listOfGraphs):
 	#sommething happens here
 	dashboardGen = '''
-	curl -XPUT http://localhost:9200/.kibana/dashboard/yifan_is_awesome1?=pretty -d'
-	{
-		"_index" : ".kibana",
-  		"_type" : "dashboard",
-  		"_id" : "yifan_is_awesome1",
-  		"_version" : 4,
-  		"found" : true,
-  		"_source":%
-  	}'
+	curl -XPUT http://localhost:9200/.kibana/dashboard/{a} -d'
+	{b}'
   	'''
 
   	sourceGen = '''
-  	{"title":"yifan_is_awesome1","hits":0,"description":"","panelsJSON":"[
+  	{"title":"{0}","hits":0,"description":"","panelsJSON":"[
   	{1}
-  	]","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"}
-  	}
+  	]","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\\"filter\\":[{\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}}}]}"}}
   	'''
 
+  	#{\"id\":\"yifan_test_area_3_CONTAINS_UPLOADS\",\"type\":\"visualization\",\"size_x\":3,\"size_y\":2,\"col\":1,\"row\":1}
 
+  	colGen ='''
+  	{\\"id\\":\\"{9}\\",\\"type\\":\\"visualization\\",\\"size_x\\":{10},\\"size_y\\":{11},\\"col\\":{12},\\"row\\":{13}},
+  	''' 	
+
+  	urlGen ='''
+  	(col:{12},id:{9},row:{13},size_x:{10},size_y:{11},type:visualization),
+  	'''
+
+  	appendedColGen = ''
+  	appendedUrlGen = ''
+
+  	size_x = 3
+  	size_y = 2
+  	col = 1 
+  	row = 1
+
+  	for x in listOfGraphs:  
+  
+  		for y in x:
+  			tempGraph = colGen.replace('{9}',str(y)).replace('{10}',str(size_x)).replace('{11}',str(size_y)).replace('{12}',str(col)).replace('{13}',str(row))	
+  			appendedColGen = appendedColGen + tempGraph 
+  			urlsAws = urlGen.replace('{9}',str(y)).replace('{10}',str(size_x)).replace('{11}',str(size_y)).replace('{12}',str(col)).replace('{13}',str(row))	
+  			appendedUrlGen = appendedUrlGen + urlsAws
+
+  			if col == 10:
+  				row += 2		
+  				col = 1
+  			else:
+  				col += 3
+
+  	appendedColGen = appendedColGen.replace('\n','').replace('\t','').replace(' ','')
+  	
+  	appendedColGen = appendedColGen[:-1] #This will remove the last comma
+  	
+
+  	sourceFinal = sourceGen.replace('{0}', 'yifans_dashboard' ).replace('{1}', appendedColGen).replace(' ', '')
+  	dashboardFinal = dashboardGen.replace('{a}', 'yifans_dashboard' ).replace('{b}', sourceFinal)
+  	print 'Dashboard Gen:'
+
+
+  	############################
+	#Lets try running it
+	############################
+	
+	dashboardFinal = dashboardFinal.replace('\n','').replace('\t','')
+	print dashboardFinal
+	
+	print 'urlAws: ' 
+	print appendedUrlGen
+
+	os.system(dashboardFinal) 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
 
