@@ -90,7 +90,7 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlLine = '''
 	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
 	{
-	    "title":{0}_%",
+	    "title":"{0}_%",
 	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
 	    "description":"",
 	    "version":1,
@@ -102,20 +102,6 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 
-	'''
-	curl -XPUT http://localhost:9200/.kibana/visualization/yifan_is_awesome2.1?=pretty -d'
-	{
-	    "title":"yifan_is_awesome2.1",
-	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
-	    "description":"",
-	    "version":1,
-	    "kibanaSavedObjectMeta":
-	    {
-	        "searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome1\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-	    }
-	}'
-	'''
-
 	listofLineKeys =[]
 	
 	for key in listOfKeys:
@@ -125,11 +111,9 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
 		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
-
 		os.system(curlDocLine)
-		print curlDocLine #Figure out why these arnt adding
-
-
+		print curlDocLine
+	
 	return listofLineKeys
 
 def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
@@ -261,7 +245,7 @@ def main():
 	db, es = oracleConnection()
 	print 'You are connected baby!'
 	listOfGraphs = visualizationGeneration()
-	dashBoardGeneration(listOfGraphs)
+	#dashBoardGeneration(listOfGraphs)
 
 
 if __name__ == "__main__":
