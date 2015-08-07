@@ -116,6 +116,7 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	
 	return listofLineKeys
 
+
 def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlArea= '''
 	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
@@ -229,7 +230,7 @@ def dashBoardGeneration(listOfGraphs):
   	############################
 	#Lets try running it
 	############################
-	
+
 	
 	dashboardFinal = dashboardFinal.replace('\n','').replace('\t','')
 	print dashboardFinal
