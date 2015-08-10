@@ -50,11 +50,10 @@ def retrieveTypes():
 		#make sure we go deeper, check to see if the next child 
 		#Still thinking of way, but at this point might just leave it as it is
 		#####################
-
-		#temp = levelFour[str(key)]
-		#print temp
 		listofKeys.append(str(key))
 	
+	print '#################################################'
+	print listofKeys
 	return listofKeys
 
 
@@ -110,9 +109,9 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 		listofLineKeys.append(lineKey)
 
 		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
-		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
-		os.system(curlDocLine)
-		print curlDocLine
+		#curlDocLine = curlDocLine.replace('\n','').replace('\t','')
+		#os.system(curlDocLine)
+		#print curlDocLine
 	
 	return listofLineKeys
 
@@ -155,7 +154,7 @@ def histGraphGeneration():
 		"version":1,"
 		kibanaSavedObjectMeta":
 		{
-			"searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome_rtid_3\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+			"searchSourceJSON":"{\\"index\\":\\{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
 		}
 	}'
 	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
@@ -177,7 +176,7 @@ def visualizationGeneration():
 	listOfKeys = retrieveTypes()
 
 	#listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
-	listofLineKeys = lineGraphGeneration(listOfKeys, 'yifan_test_line_3','yifan_is_awesome1')
+	listofLineKeys = lineGraphGeneration(listOfKeys, 'rtid3','yifan_is_awesome1')
 	#listofPieKeys = pieGraphGeneration(listOfKeys, 'yifan_test_pie_3','yifan_is_awesome1')
 	
 	############################
@@ -188,11 +187,11 @@ def visualizationGeneration():
 	listOfGraphs.append(listofLineKeys)
 	#listOfGraphs.append(listofPieKeys)
 
-	print 'visualizationGeneration: '
+	#print 'visualizationGeneration: '
 
-	print 'listOfGraphs: '
-	print listOfGraphs
-	print 'len: ', len(listOfGraphs)
+	#print 'listOfGraphs: '
+	#print listOfGraphs
+	#print 'len: ', len(listOfGraphs)
 
 	return listOfGraphs
 
@@ -266,7 +265,7 @@ def dashBoardGeneration(listOfGraphs):
 	print 'urlAws: ' 
 	print appendedUrlGen
 
-	os.system(dashboardFinal) 
+	#os.system(dashboardFinal) 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
 
