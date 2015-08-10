@@ -146,6 +146,10 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	return listofAreaKeys
 
 
+
+
+
+
 #Controlls the visulatution to create
 def visualizationGeneration():
 	listOfKeys = retrieveTypes()
