@@ -35,7 +35,7 @@ def retrieveTypes():
 	curlRetrieve = curlRetrieve.replace('\n','').replace('\t','')
 
 	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
-	jsonOutput = json.loads(strOutput)
+	jsonOutput = json.loads(strOutput.encode('utf-8'))
 
 	levelOne = jsonOutput['yifan_is_awesome_rtid_3'] #non-static
 	levelTwo = 	levelOne['mappings']
@@ -135,7 +135,7 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofAreaKeys =[]
 
 	for key in listOfKeys:
-		areaKey =nameOfVisualization+'_'+key
+		areaKey =nameOfVisualization+'_'+keypy
 
 		listofAreaKeys.append(areaKey)
 
@@ -145,9 +145,31 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 	return listofAreaKeys
 
+def histGraphGeneration():
+	curlArea= '''
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
+	'{
+		"title":"title":"{0}_%",
+		"visState":"{\\"type\\":\\"histogram\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"PEOPLE.ASSIGNED.#text\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
+		"description":"",
+		"version":1,"
+		kibanaSavedObjectMeta":
+		{
+			"searchSourceJSON":"{\\"index\\":\\"yifan_is_awesome_rtid_3\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
+		}
+	}'
+	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
+	for key in listOfKeys:
+		histKey =nameOfVisualization+'_'+keypy
 
+		listofHistKeys.append(histKey)
 
+		curlDocHist = curlHist.replace('%',key).replace('@', histKey)	
+		curlDocHist = curlDocHist.replace('\n','').replace('\t','')
+		os.system(curlDocHist) 
+
+	return listofAreaKeys
 
 
 #Controlls the visulatution to create
@@ -202,8 +224,10 @@ def dashBoardGeneration(listOfGraphs):
   	appendedColGen = ''
   	appendedUrlGen = ''
 
-  	size_x = 3
+  	#This sets the size which won't change
+  	size_x = 3 
   	size_y = 2
+  	#This sets the location whic will change
   	col = 1 
   	row = 1
 
