@@ -10,6 +10,26 @@ from xml.dom.minidom import parse
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, bulk
 
+
+def recusiveTree(tree, appendStr = '', appendList = []):
+
+	if('#text' not in tree and '@USERID' not in tree):
+		orgStr = appendStr
+
+		for x in tree:
+			if(x != 'properties'):
+				appendStr += str(x)+'.'
+			recusiveTree(tree[x],appendStr)
+			appendStr = orgStr
+	else:
+		if(appendStr is not ''):
+			for key in tree:
+				appendList.append(appendStr+key)
+			
+	return appendList
+
+
+
 def oracleConnection():
 	es = Elasticsearch('http://localhost:9200')
 
@@ -50,7 +70,16 @@ def retrieveTypes():
 		#make sure we go deeper, check to see if the next child 
 		#Still thinking of way, but at this point might just leave it as it is
 		#####################
-		listofKeys.append(str(key))
+
+		if('properties' in levelFour[key]):
+			print 'Properties True'
+			recursiveKeys = recusiveTree(levelFour[key], str(key)+'.')
+			listofKeys = listofKeys + recursiveKeys
+
+		else:
+			listofKeys.append(str(key))
+		
+		
 	
 	print '#################################################'
 	print listofKeys
@@ -268,7 +297,6 @@ def dashBoardGeneration(listOfGraphs):
 	#os.system(dashboardFinal) 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
-
 
 def main():
 	db, es = oracleConnection()

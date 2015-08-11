@@ -6,13 +6,30 @@ import re
 import pandas as pd
 import json
 
-def recusiveTree(tree):
+
+####################################################################################
+#This needs to be further tested, may exist flaws, correspond to the functions in PandaVisuilzation 
+####################################################################################
+
+
+def recusiveTree(tree, appendStr = '', appendList = []):
 
 	if('#text' not in tree and '@USERID' not in tree):
+		orgStr = appendStr
+
 		for x in tree:
-			recusiveTree(tree[x])
+			if(x != 'properties'):
+				appendStr += str(x)+'.'
+			recusiveTree(tree[x],appendStr)
+			appendStr = orgStr
 	else:
-		print tree
+		if(appendStr is not ''):
+			for key in tree:
+				appendList.append(appendStr+key)
+			
+	return appendList
+
+
 
 
 '''
@@ -43,9 +60,9 @@ def recusiveTree(tree):
 '''
 
 def main():
-	strTree = {'properties': {'ASSIGNED': {'properties': {'#text': {'index': 'not_analyzed', 'type': 'string'}, '@USERID': {'index': 'not_analyzed', 'type': 'string'}}}, 'CARBONCOPY': {'properties': {'#text': {'index': 'not_analyzed', 'type': 'string'}, '@USERID': {'index': 'not_analyzed', 'type': 'string'}}}}}
-	recusiveTree(strTree)
-
+	strTree = {'people': {'properties': {'ASSIGNED': {'properties': {'#text': {'index': 'not_analyzed', 'type': 'string'}, '@USERID': {'index': 'not_analyzed', 'type': 'string'}}}, 'CARBONCOPY': {'properties': {'#text': {'index': 'not_analyzed', 'type': 'string'}, '@USERID': {'index': 'not_analyzed', 'type': 'string'}}}}}}
+	abc = recusiveTree(strTree)
+	print abc
 
 if __name__ == "__main__":
 	main()
