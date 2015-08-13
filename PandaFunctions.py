@@ -68,6 +68,7 @@ def oracleConnection():
 
 
 
+
 def xmlCursor(db, es):
 	XMLDATAQuery = '''
     	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 3 and Last_UPDATED >= sysdate - 360
