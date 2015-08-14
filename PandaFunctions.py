@@ -10,18 +10,18 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, bulk
 
 
-def curlManipulation():
+def curlManipulation(nameOfESIndex):
 
 	#You can tottal XDELETE something that doesnt exist
 	curDelete = '''
-		 curl -XDELETE localhost:9200/yifan_is_awesome_rtid_3
+		 curl -XDELETE localhost:9200/{0}
 	'''
-	curDelete = curDelete.replace('\n','').replace('\t','')
+	curDelete = curDelete.replace('{0}', nameOfESIndex).replace('\n','').replace('\t','')
 	os.system(curDelete) #make sure curl is installed
 
 	curlCommand = '''
 
-	 curl -XPUT localhost:9200/yifan_is_awesome_rtid_3 -d '
+	 curl -XPUT localhost:9200/{0} -d '
 	 {
 		"mappings": {
 			"_default_": {
@@ -42,7 +42,7 @@ def curlManipulation():
 	}
 	'''
 
-	curlCommand = curlCommand.replace('\n','').replace('\t','')
+	curlCommand = curlCommand.replace('{0}', nameOfESIndex).replace('\n','').replace('\t','')
 	os.system(curlCommand) #make sure curl is installed
 
 
@@ -69,11 +69,15 @@ def oracleConnection():
 
 
 
-def xmlCursor(db, es, nameOfESIndex, rt_id):
+def xmlCursor(db, es, nameOfESIndex, rtid):
 
 	XMLDATAQuery = '''
     	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = {0} and Last_UPDATED >= sysdate - 360
-	'''.replace('{0}', rt_id)
+	'''
+
+	print rtid 
+	print type(rtid)
+	XMLDATAQuery = XMLDATAQuery.replace('{0}' , rtid)
 
 	#'''
     #	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 360
@@ -140,18 +144,17 @@ def main():
 	#########################################
 	#ReAssign these 
 	#########################################
-	nameOfESIndex = 'rt_id_376'
-	rt_id = 376
-
+	nameOfESIndex = 'rt_id_3'
+	rtid = '3'
 	#########################################
 
-	curlManipulation()
+	curlManipulation(nameOfESIndex)
 	print "Curl Added"
 	db, es = oracleConnection()
 	print "Oracle Connection M"
 
 
-	xmlCursor(db, es,nameOfESIndex, rt_id)
+	xmlCursor(db, es, nameOfESIndex, rtid)
 
 if __name__ == "__main__":
 	main()

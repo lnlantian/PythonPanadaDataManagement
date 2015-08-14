@@ -50,26 +50,29 @@ def oracleConnection():
 	return db, es
 
 #we need some paramaters in this
-def retrieveTypes():
-	curlRetrieve = 'curl -XGET http://localhost:9200/yifan_is_awesome_rtid_3/_mappings/timing'
+def retrieveTypes(nameOfESIndex):
+	curlRetrieve = 'curl -XGET http://localhost:9200/{0}/_mappings/timing'.replace('{0}', nameOfESIndex)
 	curlRetrieve = curlRetrieve.replace('\n','').replace('\t','')
 
 	strOutput = os.popen(curlRetrieve).read() #make sure curl is installed
 	jsonOutput = json.loads(strOutput.encode('utf-8'))
 
-	levelOne = jsonOutput['yifan_is_awesome_rtid_3'] #non-static
+	########################
+	#TODO:
+	#Do a try catch, if this doesn't exist it will create an error, which is the users fault
+	########################
+	levelOne = jsonOutput[nameOfESIndex] #non-static
 	levelTwo = 	levelOne['mappings']
 	levelThree = levelTwo['timing']
 	levelFour = levelThree['properties']
 	
 	listofKeys = []
 
+	########################
+	#This will handle nested conditions
+	########################
+
 	for key in levelFour:
-		##################### 
-		#TO-DO
-		#make sure we go deeper, check to see if the next child 
-		#Still thinking of way, but at this point might just leave it as it is
-		#####################
 
 		if('properties' in levelFour[key]):
 			recursiveKeys = recusiveTree(levelFour[key], str(key)+'.')
@@ -80,17 +83,20 @@ def retrieveTypes():
 				
 		else:
 			listofKeys.append(str(key))
-		
-	print '#################################################'
-	print listofKeys
+	
+	#################################################
+	#For testing purposes
+	#################################################
+	#print listofKeys
+	
 	return listofKeys
 
 
 def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlPie = 	'''    
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
 	{
-	    "title":"{0}_%",
+	    "title":"{0}_{1}_%",
 	    "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
 	    "description":"",
 	    "version":1,
@@ -115,11 +121,28 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 
 def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
-	curlLine = '''
+	
+	curlLine ='''
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
+	{
+		"title":"{0}_{1}_%",
+		"visState":"{\\"aggs\\":[{\\"id\\":\\"1\\",\\"params\\":{},\\"schema\\":\\"metric\\",\\"type\\":\\"count\\"},{\\"id\\":\\"2\\",\\"params\\":{\\"field\\":\\"%\\",\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\",\\"size\\":100},\\"schema\\":\\"segment\\",\\"type\\":\\"terms\\"}],\\"listeners\\":{},\\"params\\":{\\"addLegend\\":true,\\"addTooltip\\":true,\\"defaultYExtents\\":false,\\"shareYAxis\\":true},\\"type\\":\\"line\\"}",
+		"description":"","version":1,
+		"kibanaSavedObjectMeta":
+		{
+			"searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"analyze_wildcard\\":true,\\"query\\":\\"*\\"}},\\"filter\\":[]}"
+		}
+	}'
+	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
+
+	######################################
+	#This curl works for date related graphs
+	######################################
+	curlLineDate = '''
 	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
 	{
 	    "title":"{0}_{1}_%",
-	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
+	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
 	    "description":"",
 	    "version":1,
 	    "kibanaSavedObjectMeta":
@@ -138,19 +161,21 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 		listofLineKeys.append(lineKey)
 
 		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
-		#curlDocLine = curlDocLine.replace('\n','').replace('\t','')
-		#os.system(curlDocLine)
-		#print curlDocLine
-	
+		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
+		os.system(curlDocLine)
+		print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+		print curlDocLine
+		print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+
 	return listofLineKeys
 
 
 def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlArea= '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
 	{
-		"title":"{0}_%",
-		"visState":"{\\"type\\":\\"area\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"month\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
+		"title":"{0}_{1}_%",
+		"visState":"{\\"type\\":\\"area\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"interval\\":\\"month\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
 		"description":"",
 		"version":1,
 		"kibanaSavedObjectMeta":
@@ -163,7 +188,7 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofAreaKeys =[]
 
 	for key in listOfKeys:
-		areaKey =nameOfVisualization+'_'+keypy
+		areaKey =nameOfVisualization+'_'+key
 
 		listofAreaKeys.append(areaKey)
 
@@ -175,10 +200,10 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlArea= '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
 	'{
-		"title":"title":"{0}_%",
-		"visState":"{\\"type\\":\\"histogram\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"PEOPLE.ASSIGNED.#text\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
+		"title":"title":"{0}_{1}_%",
+		"visState":"{\\"type\\":\\"histogram\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
 		"description":"",
 		"version":1,"
 		kibanaSavedObjectMeta":
@@ -189,7 +214,7 @@ def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 	for key in listOfKeys:
-		histKey =nameOfVisualization+'_'+keypy
+		histKey =nameOfVisualization+'_'+key
 
 		listofHistKeys.append(histKey)
 
@@ -201,11 +226,11 @@ def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 
 #Controlls the visulatution to create
-def visualizationGeneration():
-	listOfKeys = retrieveTypes()
+def visualizationGeneration(nameOfESIndex):
+	listOfKeys = retrieveTypes(nameOfESIndex)
 
 	#listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
-	listofLineKeys = lineGraphGeneration(listOfKeys, 'line','rt_id_376')
+	listofLineKeys = lineGraphGeneration(listOfKeys, 'line',nameOfESIndex)
 	#listofPieKeys = pieGraphGeneration(listOfKeys, 'yifan_test_pie_3','yifan_is_awesome1')
 	
 	############################
@@ -299,13 +324,16 @@ def dashBoardGeneration(listOfGraphs):
 #This is obviously temporery until we figure better  ways to load information tinto code
 
 def main():
+	#########################################
+	#ReAssign these 
+	#########################################
+	nameOfESIndex = 'rt_id_376'
+	#########################################
+
 	db, es = oracleConnection()
 	print 'You are connected baby!'
 
-	nameOfVisualization
-	nameOfESIndex
-
-	listOfGraphs = visualizationGeneration()
+	listOfGraphs = visualizationGeneration(nameOfESIndex)
 	#dashBoardGeneration(listOfGraphs)
 
 
