@@ -24,7 +24,7 @@ def recusiveTree(tree, appendStr = '', appendList = []):
 	else:
 		if(appendStr is not ''):
 			for key in tree:
-				appendList.append(appendStr+key)
+				appendList.append(str(appendStr)+key)
 			
 	return appendList
 
