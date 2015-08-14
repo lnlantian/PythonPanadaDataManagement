@@ -72,15 +72,15 @@ def retrieveTypes():
 		#####################
 
 		if('properties' in levelFour[key]):
-			print 'Properties True'
 			recursiveKeys = recusiveTree(levelFour[key], str(key)+'.')
-			listofKeys = listofKeys + recursiveKeys
 
+			###
+			for x in recursiveKeys:
+				listofKeys = listofKeys + [x.encode('ascii','ignore')]
+				
 		else:
 			listofKeys.append(str(key))
 		
-		
-	
 	print '#################################################'
 	print listofKeys
 	return listofKeys
@@ -116,9 +116,9 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlLine = '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
+	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
 	{
-	    "title":"{0}_%",
+	    "title":"{0}_{1}_%",
 	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"SUBMITDATE\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
 	    "description":"",
 	    "version":1,
@@ -173,7 +173,7 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 	return listofAreaKeys
 
-def histGraphGeneration():
+def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlArea= '''
 	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_% -d'
 	'{
@@ -205,7 +205,7 @@ def visualizationGeneration():
 	listOfKeys = retrieveTypes()
 
 	#listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
-	listofLineKeys = lineGraphGeneration(listOfKeys, 'rtid3','yifan_is_awesome1')
+	listofLineKeys = lineGraphGeneration(listOfKeys, 'line','rt_id_376')
 	#listofPieKeys = pieGraphGeneration(listOfKeys, 'yifan_test_pie_3','yifan_is_awesome1')
 	
 	############################
@@ -301,6 +301,10 @@ def dashBoardGeneration(listOfGraphs):
 def main():
 	db, es = oracleConnection()
 	print 'You are connected baby!'
+
+	nameOfVisualization
+	nameOfESIndex
+
 	listOfGraphs = visualizationGeneration()
 	#dashBoardGeneration(listOfGraphs)
 
