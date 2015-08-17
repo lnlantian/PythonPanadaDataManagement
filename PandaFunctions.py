@@ -143,6 +143,7 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 def main():
 	#########################################
 	#ReAssign these 
+	#IE: from userinput or another source of input
 	#########################################
 	nameOfESIndex = 'rt_id_3'
 	rtid = '3'

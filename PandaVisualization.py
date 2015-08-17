@@ -87,7 +87,7 @@ def retrieveTypes(nameOfESIndex):
 	#################################################
 	#For testing purposes
 	#################################################
-	#print listofKeys
+	print 'ListOfKey: ' , listofKeys
 	
 	return listofKeys
 
@@ -156,16 +156,17 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofLineKeys =[]
 	
 	for key in listOfKeys:
+
 		lineKey =nameOfVisualization+'_'+key
 		
+
 		listofLineKeys.append(lineKey)
 
-		curlDocLine = curlLine.replace('%',key).replace('@', lineKey)		
+		curlDocLine = curlLine.replace('%',key)
+
 		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
 		os.system(curlDocLine)
-		print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
-		print curlDocLine
-		print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+
 
 	return listofLineKeys
 
@@ -326,6 +327,7 @@ def dashBoardGeneration(listOfGraphs):
 def main():
 	#########################################
 	#ReAssign these 
+	#IE: from userinput or another source of input
 	#########################################
 	nameOfESIndex = 'rt_id_376'
 	#########################################
