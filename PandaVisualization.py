@@ -96,11 +96,13 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 	for key in listOfKeys:
 		pieKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key	
-		listofPieKeys.append(pieKey)
+		
+		if(pieKey not in listofPieKeys):
+			listofPieKeys.append(pieKey)
 
-		curlDocPie = curlPie.replace('{%}',key)		
-		curlDocPie = curlDocPie.replace('\n','').replace('\t','')
-		os.system(curlDocPie)
+			curlDocPie = curlPie.replace('{%}',key)		
+			curlDocPie = curlDocPie.replace('\n','').replace('\t','')
+			os.system(curlDocPie)
 
 	return listofPieKeys
 
@@ -115,10 +117,11 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	for key in listOfKeys:
 
 		lineKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
-		listofLineKeys.append(lineKey)
-		curlDocLine = curlLine.replace('{%}',key)
-		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
-		os.system(curlDocLine)
+		if(lineKey not in listofLineKeys):
+			listofLineKeys.append(lineKey)
+			curlDocLine = curlLine.replace('{%}',key)
+			curlDocLine = curlDocLine.replace('\n','').replace('\t','')
+			os.system(curlDocLine)
 
 
 	return listofLineKeys
@@ -131,12 +134,12 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 	for key in listOfKeys:
 		areaKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
+		if(areaKey not in listofAreaKeys):
+			listofAreaKeys.append(areaKey)
 
-		listofAreaKeys.append(areaKey)
-
-		curlDocArea = curlArea.replace('{%}',key)	
-		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
-		os.system(curlDocArea) 
+			curlDocArea = curlArea.replace('{%}',key)	
+			curlDocArea = curlDocArea.replace('\n','').replace('\t','')
+			os.system(curlDocArea) 
 
 	return listofAreaKeys
 
@@ -148,11 +151,12 @@ def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	for key in listOfKeys:
 		histKey = nameOfVisualization+'_'+nameOfESIndex+'_'+key
 
-		listofHistKeys.append(histKey)
+		if(histKey not in listofHistKeys):
+			listofHistKeys.append(histKey)
 
-		curlDocHist = curlHist.replace('{%}',key)	
-		curlDocHist = curlDocHist.replace('\n','').replace('\t','')
-		os.system(curlDocHist) 
+			curlDocHist = curlHist.replace('{%}',key)	
+			curlDocHist = curlDocHist.replace('\n','').replace('\t','')
+			os.system(curlDocHist) 
 
 	return listofHistKeys
 
@@ -181,6 +185,10 @@ def visualizationGeneration(nameOfESIndex):
 	#print 'listOfGraphs: '
 	#print listOfGraphs
 	#print 'len: ', len(listOfGraphs)
+
+
+	e = open('listOfGraphs.txt', 'w')
+	e.write(str(listOfGraphs))
 
 	return listOfGraphs
 
@@ -226,7 +234,7 @@ def dashBoardGeneration(listOfGraphs, dashboardIndex):
   			appendedColGen = appendedColGen + tempGraph 
   			urlsAws = urlGen.replace('{9}',str(y)).replace('{10}',str(size_x)).replace('{11}',str(size_y)).replace('{12}',str(col)).replace('{13}',str(row))	
   			appendedUrlGen = appendedUrlGen + urlsAws
-
+  			print tempGraph
   			if col == 10:
   				row += 2		
   				col = 1
