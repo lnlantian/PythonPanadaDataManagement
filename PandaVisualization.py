@@ -6,6 +6,8 @@ import re
 import pandas as pd
 import json
 
+import curlTemplates as ct
+
 from xml.dom.minidom import parse
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, bulk
@@ -87,25 +89,13 @@ def retrieveTypes(nameOfESIndex):
 	#################################################
 	#For testing purposes
 	#################################################
-	print 'ListOfKey: ' , listofKeys
+	#print 'ListOfKey: ' , listofKeys
 	
 	return listofKeys
 
 
 def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
-	curlPie = 	'''    
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
-	{
-	    "title":"{0}_{1}_%",
-	    "visState":"{\\"type\\":\\"pie\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"isDonut\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
-	    "description":"",
-	    "version":1,
-	    "kibanaSavedObjectMeta":
-	    {
-	        "searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-	    }
-	}'   
-	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
+	curlPie = ct.curlPie.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 	listofPieKeys =[]
 
@@ -113,7 +103,7 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 		pieKey =nameOfVisualization+'_'+key	
 		listofPieKeys.append(pieKey)
 
-		curlDocPie = curlPie.replace('%',key).replace('@', pieKey)		
+		curlDocPie = curlPie.replace('%',key)		
 		curlDocPie = curlDocPie.replace('\n','').replace('\t','')
 		os.system(curlDocPie)
 
@@ -121,36 +111,8 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 
 def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
-	
-	curlLine ='''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
-	{
-		"title":"{0}_{1}_%",
-		"visState":"{\\"aggs\\":[{\\"id\\":\\"1\\",\\"params\\":{},\\"schema\\":\\"metric\\",\\"type\\":\\"count\\"},{\\"id\\":\\"2\\",\\"params\\":{\\"field\\":\\"%\\",\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\",\\"size\\":100},\\"schema\\":\\"segment\\",\\"type\\":\\"terms\\"}],\\"listeners\\":{},\\"params\\":{\\"addLegend\\":true,\\"addTooltip\\":true,\\"defaultYExtents\\":false,\\"shareYAxis\\":true},\\"type\\":\\"line\\"}",
-		"description":"","version":1,
-		"kibanaSavedObjectMeta":
-		{
-			"searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"analyze_wildcard\\":true,\\"query\\":\\"*\\"}},\\"filter\\":[]}"
-		}
-	}'
-	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
-	######################################
-	#This curl works for date related graphs
-	######################################
-	curlLineDate = '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
-	{
-	    "title":"{0}_{1}_%",
-	    "visState":"{\\"type\\":\\"line\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"interval\\":\\"week\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
-	    "description":"",
-	    "version":1,
-	    "kibanaSavedObjectMeta":
-	    {
-	        "searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-	    }
-	}'
-	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
+	curlLine = ct.curlLine.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 
 	listofLineKeys =[]
@@ -158,12 +120,8 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	for key in listOfKeys:
 
 		lineKey =nameOfVisualization+'_'+key
-		
-
 		listofLineKeys.append(lineKey)
-
-		curlDocLine = curlLine.replace('%',key)
-
+		curlDocLine = curlLine.replace('{%}',key)
 		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
 		os.system(curlDocLine)
 
@@ -172,19 +130,7 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 
 def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
-	curlArea= '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
-	{
-		"title":"{0}_{1}_%",
-		"visState":"{\\"type\\":\\"area\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"date_histogram\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"interval\\":\\"month\\",\\"min_doc_count\\":1,\\"extended_bounds\\":{}}}],\\"listeners\\":{}}",
-		"description":"",
-		"version":1,
-		"kibanaSavedObjectMeta":
-		{
-			"searchSourceJSON":"{\\"index\\":\\"{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-		}
-	}'
-	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
+	curlArea= ct.curlArea.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 	
 	listofAreaKeys =[]
 
@@ -200,19 +146,7 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	return listofAreaKeys
 
 def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
-	curlArea= '''
-	curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_% -d'
-	'{
-		"title":"title":"{0}_{1}_%",
-		"visState":"{\\"type\\":\\"histogram\\",\\"params\\":{\\"shareYAxis\\":true,\\"addTooltip\\":true,\\"addLegend\\":true,\\"mode\\":\\"stacked\\",\\"defaultYExtents\\":false},\\"aggs\\":[{\\"id\\":\\"1\\",\\"type\\":\\"count\\",\\"schema\\":\\"metric\\",\\"params\\":{}},{\\"id\\":\\"2\\",\\"type\\":\\"terms\\",\\"schema\\":\\"segment\\",\\"params\\":{\\"field\\":\\"%\\",\\"size\\":100,\\"order\\":\\"desc\\",\\"orderBy\\":\\"1\\"}}],\\"listeners\\":{}}",
-		"description":"",
-		"version":1,"
-		kibanaSavedObjectMeta":
-		{
-			"searchSourceJSON":"{\\"index\\":\\{1}\\",\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}},\\"filter\\":[]}"
-		}
-	}'
-	'''.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
+	curlHist= ct.curlHist.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
 	for key in listOfKeys:
 		histKey =nameOfVisualization+'_'+key
@@ -306,7 +240,7 @@ def dashBoardGeneration(listOfGraphs):
 
   	sourceFinal = sourceGen.replace('{0}', 'yifans_dashboard' ).replace('{1}', appendedColGen).replace(' ', '')
   	dashboardFinal = dashboardGen.replace('{a}', 'yifans_dashboard' ).replace('{b}', sourceFinal)
-  	print 'Dashboard Gen:'
+  	#print 'Dashboard Gen:'
 
 
   	############################
@@ -315,10 +249,10 @@ def dashBoardGeneration(listOfGraphs):
 
 	
 	dashboardFinal = dashboardFinal.replace('\n','').replace('\t','')
-	print dashboardFinal
+	#print dashboardFinal
 	
-	print 'urlAws: ' 
-	print appendedUrlGen
+	#print 'urlAws: ' 
+	#print appendedUrlGen
 
 	#os.system(dashboardFinal) 
 
@@ -331,10 +265,10 @@ def main():
 	#########################################
 	nameOfESIndex = 'rt_id_376'
 	#########################################
-
-	db, es = oracleConnection()
 	print 'You are connected baby!'
 
+	db, es = oracleConnection()
+	
 	listOfGraphs = visualizationGeneration(nameOfESIndex)
 	#dashBoardGeneration(listOfGraphs)
 
