@@ -86,11 +86,6 @@ def retrieveTypes(nameOfESIndex):
 		else:
 			listofKeys.append(str(key))
 	
-	#################################################
-	#For testing purposes
-	#################################################
-	#print 'ListOfKey: ' , listofKeys
-	
 	return listofKeys
 
 
@@ -100,10 +95,10 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofPieKeys =[]
 
 	for key in listOfKeys:
-		pieKey =nameOfVisualization+'_'+key	
+		pieKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key	
 		listofPieKeys.append(pieKey)
 
-		curlDocPie = curlPie.replace('%',key)		
+		curlDocPie = curlPie.replace('{%}',key)		
 		curlDocPie = curlDocPie.replace('\n','').replace('\t','')
 		os.system(curlDocPie)
 
@@ -119,7 +114,7 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	
 	for key in listOfKeys:
 
-		lineKey =nameOfVisualization+'_'+key
+		lineKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
 		listofLineKeys.append(lineKey)
 		curlDocLine = curlLine.replace('{%}',key)
 		curlDocLine = curlDocLine.replace('\n','').replace('\t','')
@@ -135,11 +130,11 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofAreaKeys =[]
 
 	for key in listOfKeys:
-		areaKey =nameOfVisualization+'_'+key
+		areaKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
 
 		listofAreaKeys.append(areaKey)
 
-		curlDocArea = curlArea.replace('%',key).replace('@', areaKey)	
+		curlDocArea = curlArea.replace('{%}',key)	
 		curlDocArea = curlDocArea.replace('\n','').replace('\t','')
 		os.system(curlDocArea) 
 
@@ -148,34 +143,39 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	curlHist= ct.curlHist.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
 
+	listofHistKeys =[]
+
 	for key in listOfKeys:
-		histKey =nameOfVisualization+'_'+key
+		histKey = nameOfVisualization+'_'+nameOfESIndex+'_'+key
 
 		listofHistKeys.append(histKey)
 
-		curlDocHist = curlHist.replace('%',key).replace('@', histKey)	
+		curlDocHist = curlHist.replace('{%}',key)	
 		curlDocHist = curlDocHist.replace('\n','').replace('\t','')
 		os.system(curlDocHist) 
 
-	return listofAreaKeys
+	return listofHistKeys
 
 
 #Controlls the visulatution to create
 def visualizationGeneration(nameOfESIndex):
 	listOfKeys = retrieveTypes(nameOfESIndex)
 
-	#listofAreaKeys = areaGraphGeneration(listOfKeys, 'yifan_test_area_3','yifan_is_awesome1')
 	listofLineKeys = lineGraphGeneration(listOfKeys, 'line',nameOfESIndex)
-	#listofPieKeys = pieGraphGeneration(listOfKeys, 'yifan_test_pie_3','yifan_is_awesome1')
-	
+	listofAreaKeys = areaGraphGeneration(listOfKeys, 'area',nameOfESIndex)
+	listofPieKeys = pieGraphGeneration(listOfKeys, 'pie',nameOfESIndex)
+	listofHistKeys =  histGraphGeneration(listOfKeys, 'hist',nameOfESIndex)
+
+
 	############################
 	#TD: some thing that appends the list of keys
 	############################
-	listOfGraphs = []
-	#listOfGraphs.append(listofAreaKeys)
-	listOfGraphs.append(listofLineKeys)
-	#listOfGraphs.append(listofPieKeys)
 
+	listOfGraphs = []
+	listOfGraphs.append(listofAreaKeys)
+	listOfGraphs.append(listofLineKeys)
+	listOfGraphs.append(listofPieKeys)
+	listOfGraphs.append(listofHistKeys)
 	#print 'visualizationGeneration: '
 
 	#print 'listOfGraphs: '
@@ -186,7 +186,7 @@ def visualizationGeneration(nameOfESIndex):
 
 	
 
-def dashBoardGeneration(listOfGraphs):
+def dashBoardGeneration(listOfGraphs, dashboardIndex):
 	#sommething happens here
 	dashboardGen = '''
 	curl -XPUT http://localhost:9200/.kibana/dashboard/{a} -d'
@@ -238,8 +238,8 @@ def dashBoardGeneration(listOfGraphs):
   	appendedColGen = appendedColGen[:-1] #This will remove the last comma
   	
 
-  	sourceFinal = sourceGen.replace('{0}', 'yifans_dashboard' ).replace('{1}', appendedColGen).replace(' ', '')
-  	dashboardFinal = dashboardGen.replace('{a}', 'yifans_dashboard' ).replace('{b}', sourceFinal)
+  	sourceFinal = sourceGen.replace('{0}', dashboardIndex ).replace('{1}', appendedColGen).replace(' ', '')
+  	dashboardFinal = dashboardGen.replace('{a}', dashboardIndex).replace('{b}', sourceFinal)
   	#print 'Dashboard Gen:'
 
 
@@ -249,11 +249,17 @@ def dashBoardGeneration(listOfGraphs):
 
 	
 	dashboardFinal = dashboardFinal.replace('\n','').replace('\t','')
-	#print dashboardFinal
 	
+	#print dashboardFinal	
 	#print 'urlAws: ' 
 	#print appendedUrlGen
 
+	print 'XOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXO'
+	print dashboardFinal
+	print 'XOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXO'
+	
+	f = open('curlDashboard', 'w')
+	f.write(dashboardFinal)
 	#os.system(dashboardFinal) 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
@@ -270,7 +276,11 @@ def main():
 	db, es = oracleConnection()
 	
 	listOfGraphs = visualizationGeneration(nameOfESIndex)
-	#dashBoardGeneration(listOfGraphs)
+	print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+	print listOfGraphs
+	print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+
+	dashBoardGeneration(listOfGraphs, 'dash_rt_id_376')
 
 
 if __name__ == "__main__":
