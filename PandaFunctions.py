@@ -74,9 +74,6 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 	XMLDATAQuery = '''
     	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = {0} and Last_UPDATED >= sysdate - 360
 	'''
-
-	print rtid 
-	print type(rtid)
 	XMLDATAQuery = XMLDATAQuery.replace('{0}' , rtid)
 
 	#'''
@@ -116,7 +113,7 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 	        pandwas = pd.read_json(jsoned)
 
 	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
-	        pandwas.loc['_index'] =  ['rt_id_376']
+	        pandwas.loc['_index'] =  [nameOfESIndex]
 	        pandwas.loc['_type'] =  ['timing']
 	        df_transposed =  pandwas.transpose()    #pivot 
 

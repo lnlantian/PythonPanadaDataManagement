@@ -180,12 +180,6 @@ def visualizationGeneration(nameOfESIndex):
 	listOfGraphs.append(listofLineKeys)
 	listOfGraphs.append(listofPieKeys)
 	listOfGraphs.append(listofHistKeys)
-	#print 'visualizationGeneration: '
-
-	#print 'listOfGraphs: '
-	#print listOfGraphs
-	#print 'len: ', len(listOfGraphs)
-
 
 	e = open('listOfGraphs.txt', 'w')
 	e.write(str(listOfGraphs))
@@ -248,19 +242,14 @@ def dashBoardGeneration(listOfGraphs, dashboardIndex):
 
   	sourceFinal = sourceGen.replace('{0}', dashboardIndex ).replace('{1}', appendedColGen).replace(' ', '')
   	dashboardFinal = dashboardGen.replace('{a}', dashboardIndex).replace('{b}', sourceFinal)
-  	#print 'Dashboard Gen:'
-
 
   	############################
 	#Lets try running it
 	############################
 
+
 	
 	dashboardFinal = dashboardFinal.replace('\n','').replace('\t','')
-	
-	#print dashboardFinal	
-	#print 'urlAws: ' 
-	#print appendedUrlGen
 
 	print 'XOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXO'
 	print dashboardFinal
