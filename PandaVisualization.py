@@ -75,14 +75,10 @@ def retrieveTypes(nameOfESIndex):
 	########################
 
 	for key in levelFour:
-
 		if('properties' in levelFour[key]):
 			recursiveKeys = recusiveTree(levelFour[key], str(key)+'.')
-
-			###
 			for x in recursiveKeys:
-				listofKeys = listofKeys + [x.encode('ascii','ignore')]
-				
+				listofKeys = listofKeys + [x.encode('ascii','ignore')]		
 		else:
 			listofKeys.append(str(key))
 	
@@ -108,9 +104,7 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 
 def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
-
 	curlLine = ct.curlLine.replace('{0}', nameOfVisualization).replace('{1}',nameOfESIndex)
-
 
 	listofLineKeys =[]
 	
@@ -136,7 +130,6 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 		areaKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
 		if(areaKey not in listofAreaKeys):
 			listofAreaKeys.append(areaKey)
-
 			curlDocArea = curlArea.replace('{%}',key)	
 			curlDocArea = curlDocArea.replace('\n','').replace('\t','')
 			os.system(curlDocArea) 
@@ -153,7 +146,6 @@ def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 
 		if(histKey not in listofHistKeys):
 			listofHistKeys.append(histKey)
-
 			curlDocHist = curlHist.replace('{%}',key)	
 			curlDocHist = curlDocHist.replace('\n','').replace('\t','')
 			os.system(curlDocHist) 
@@ -165,14 +157,18 @@ def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 def visualizationGeneration(nameOfESIndex):
 	listOfKeys = retrieveTypes(nameOfESIndex)
 
+	############################
+	#We will generate a different SET of graphs for each type of visualization
+	#A SET of visualization is one for every key
+	############################
+
 	listofLineKeys = lineGraphGeneration(listOfKeys, 'line',nameOfESIndex)
 	listofAreaKeys = areaGraphGeneration(listOfKeys, 'area',nameOfESIndex)
 	listofPieKeys = pieGraphGeneration(listOfKeys, 'pie',nameOfESIndex)
 	listofHistKeys =  histGraphGeneration(listOfKeys, 'hist',nameOfESIndex)
 
-
 	############################
-	#TD: some thing that appends the list of keys
+	#This will manually append all of the visualization indexes together to return
 	############################
 
 	listOfGraphs = []
@@ -201,8 +197,6 @@ def dashBoardGeneration(listOfGraphs, dashboardIndex):
   	]","version":1,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\\"filter\\":[{\\"query\\":{\\"query_string\\":{\\"query\\":\\"*\\",\\"analyze_wildcard\\":true}}}]}"}}
   	'''
 
-  	#{\"id\":\"yifan_test_area_3_CONTAINS_UPLOADS\",\"type\":\"visualization\",\"size_x\":3,\"size_y\":2,\"col\":1,\"row\":1}
-
   	colGen ='''
   	{\\"id\\":\\"{9}\\",\\"type\\":\\"visualization\\",\\"size_x\\":{10},\\"size_y\\":{11},\\"col\\":{12},\\"row\\":{13}},
   	''' 	
@@ -215,11 +209,14 @@ def dashBoardGeneration(listOfGraphs, dashboardIndex):
   	appendedUrlGen = ''
 
   	#This sets the size which won't change
+  	#All Tables should be 3 units wide and 2 units hight
   	size_x = 3 
   	size_y = 2
-  	#This sets the location whic will change
+  	#This sets the location which will change, we start from the top left corner (1,1)
   	col = 1 
   	row = 1
+
+  	#The purspoe of this nested iternation is to actuaily build the dashboard
 
   	for x in listOfGraphs:  
   
@@ -228,36 +225,35 @@ def dashBoardGeneration(listOfGraphs, dashboardIndex):
   			appendedColGen = appendedColGen + tempGraph 
   			urlsAws = urlGen.replace('{9}',str(y)).replace('{10}',str(size_x)).replace('{11}',str(size_y)).replace('{12}',str(col)).replace('{13}',str(row))	
   			appendedUrlGen = appendedUrlGen + urlsAws
-  			print tempGraph
+  		
+  			#When we get to the (x,10) we would want to move down 2 rows, this is what condition does
+ 
   			if col == 10:
   				row += 2		
   				col = 1
   			else:
   				col += 3
 
-  	appendedColGen = appendedColGen.replace('\n','').replace('\t','').replace(' ','')
-  	
+  	appendedColGen = appendedColGen.replace('\n','').replace('\t','').replace(' ','')	
   	appendedColGen = appendedColGen[:-1] #This will remove the last comma
   	
 
   	sourceFinal = sourceGen.replace('{0}', dashboardIndex ).replace('{1}', appendedColGen).replace(' ', '')
   	dashboardFinal = dashboardGen.replace('{a}', dashboardIndex).replace('{b}', sourceFinal)
+  	#print 'Dashboard Gen:'
+
 
   	############################
 	#Lets try running it
 	############################
-
-
 	
 	dashboardFinal = dashboardFinal.replace('\n','').replace('\t','')
 
-	print 'XOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXO'
-	print dashboardFinal
-	print 'XOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXOXO'
-	
 	f = open('curlDashboard', 'w')
 	f.write(dashboardFinal)
-	#os.system(dashboardFinal) 
+	
+	#Running the cURL query 
+	os.system(dashboardFinal) 
 
 #This is obviously temporery until we figure better  ways to load information tinto code
 
@@ -266,18 +262,15 @@ def main():
 	#ReAssign these 
 	#IE: from userinput or another source of input
 	#########################################
-	nameOfESIndex = 'rt_id_376'
+	nameOfESIndex = 'rt_id_11'
+	nameOfDashboard = 'dash_rt_id_11'
 	#########################################
 	print 'You are connected baby!'
 
 	db, es = oracleConnection()
 	
 	listOfGraphs = visualizationGeneration(nameOfESIndex)
-	print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
-	print listOfGraphs
-	print '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
-
-	dashBoardGeneration(listOfGraphs, 'dash_rt_id_376')
+	dashBoardGeneration(listOfGraphs, nameOfDashboard)
 
 
 if __name__ == "__main__":

@@ -76,12 +76,6 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 	'''
 	XMLDATAQuery = XMLDATAQuery.replace('{0}' , rtid)
 
-	#'''
-    #	select  XMLType.GetclobVal(rq_info) from TRS.CATER_XMLDATA_V3 where rt_id = 376 and Last_UPDATED >= sysdate - 360
-	#'''
-
-	#select XMLType.GetStringVal(rq_info) from trs.cater_xmlDATA_V3 where data_id = 2143058
-
 	curs = db.cursor()
 	curs.execute(XMLDATAQuery)
 	columns = [c[0].lower() for c in curs.description]
@@ -91,8 +85,7 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 
 	while True:
 	    rows = curs.fetchmany()
-	    
-	    print 'Fight da powa'
+
 	    x = 0
 	    xmlStr = ''
 	    if rows == []:
@@ -113,7 +106,7 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 	        pandwas = pd.read_json(jsoned)
 
 	        pandwas = pandwas.drop(pandwas.index[[6,8]])    
-	        pandwas.loc['_index'] =  [nameOfESIndex]
+	        pandwas.loc['_index'] =  [nameOfESIndex] #This was changed
 	        pandwas.loc['_type'] =  ['timing']
 	        df_transposed =  pandwas.transpose()    #pivot 
 
@@ -132,8 +125,6 @@ def xmlCursor(db, es, nameOfESIndex, rtid):
 	    appendedDF =[]
 	    rows = []
 
-
-	    print 'Written.'
 	db.close()
 
 
@@ -142,17 +133,15 @@ def main():
 	#ReAssign these 
 	#IE: from userinput or another source of input
 	#########################################
-	nameOfESIndex = 'rt_id_3'
-	rtid = '3'
+	nameOfESIndex = 'rt_id_11'
+	rtid = '11'
 	#########################################
 
 	curlManipulation(nameOfESIndex)
-	print "Curl Added"
+	
 	db, es = oracleConnection()
-	print "Oracle Connection M"
-
 
 	xmlCursor(db, es, nameOfESIndex, rtid)
-
+	print "Curl Added"
 if __name__ == "__main__":
 	main()
