@@ -91,12 +91,13 @@ def pieGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofPieKeys =[]
 
 	for key in listOfKeys:
-		pieKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key	
-		
+		hashLessKey = key.replace('#', '')
+		pieKey =nameOfVisualization+'_'+nameOfESIndex+'_'+hashLessKey	
+
 		if(pieKey not in listofPieKeys):
 			listofPieKeys.append(pieKey)
 
-			curlDocPie = curlPie.replace('{%}',key)		
+			curlDocPie = curlPie.replace('{#}',hashLessKey).replace('{%}',key)		
 			curlDocPie = curlDocPie.replace('\n','').replace('\t','')
 			os.system(curlDocPie)
 
@@ -109,11 +110,12 @@ def lineGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofLineKeys =[]
 	
 	for key in listOfKeys:
+		hashLessKey = key.replace('#', '')
+		lineKey =nameOfVisualization+'_'+nameOfESIndex+'_'+hashLessKey
 
-		lineKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
 		if(lineKey not in listofLineKeys):
 			listofLineKeys.append(lineKey)
-			curlDocLine = curlLine.replace('{%}',key)
+			curlDocLine = curlLine.replace('{#}',hashLessKey).replace('{%}',key)
 			curlDocLine = curlDocLine.replace('\n','').replace('\t','')
 			os.system(curlDocLine)
 
@@ -127,10 +129,12 @@ def areaGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofAreaKeys =[]
 
 	for key in listOfKeys:
-		areaKey =nameOfVisualization+'_'+nameOfESIndex+'_'+key
+		hashLessKey = key.replace('#', '')
+		areaKey =nameOfVisualization+'_'+nameOfESIndex+'_'+hashLessKey
+
 		if(areaKey not in listofAreaKeys):
 			listofAreaKeys.append(areaKey)
-			curlDocArea = curlArea.replace('{%}',key)	
+			curlDocArea = curlArea.replace('{#}',hashLessKey).replace('{%}',key)	
 			curlDocArea = curlDocArea.replace('\n','').replace('\t','')
 			os.system(curlDocArea) 
 
@@ -142,11 +146,12 @@ def histGraphGeneration(listOfKeys,nameOfVisualization,nameOfESIndex):
 	listofHistKeys =[]
 
 	for key in listOfKeys:
-		histKey = nameOfVisualization+'_'+nameOfESIndex+'_'+key
+		hashLessKey = key.replace('#', '')
+		histKey = nameOfVisualization+'_'+nameOfESIndex+'_'+hashLessKey
 
 		if(histKey not in listofHistKeys):
 			listofHistKeys.append(histKey)
-			curlDocHist = curlHist.replace('{%}',key)	
+			curlDocHist = curlHist.replace('{#}',hashLessKey).replace('{%}',key)	
 			curlDocHist = curlDocHist.replace('\n','').replace('\t','')
 			os.system(curlDocHist) 
 
@@ -262,8 +267,8 @@ def main():
 	#ReAssign these 
 	#IE: from userinput or another source of input
 	#########################################
-	nameOfESIndex = 'rt_id_11'
-	nameOfDashboard = 'dash_rt_id_11'
+	nameOfESIndex = 'rt_id_3'
+	nameOfDashboard = 'dash_rt_id_3'
 	#########################################
 	print 'You are connected baby!'
 
