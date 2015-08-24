@@ -166,6 +166,8 @@ def visualizationGeneration(nameOfESIndex):
 	#We will generate a different SET of graphs for each type of visualization
 	#A SET of visualization is one for every key
 	############################
+	typesOfGraph = ['line','area','pie','hist']
+	listOfGraphs
 
 	listofLineKeys = lineGraphGeneration(listOfKeys, 'line',nameOfESIndex)
 	listofAreaKeys = areaGraphGeneration(listOfKeys, 'area',nameOfESIndex)
