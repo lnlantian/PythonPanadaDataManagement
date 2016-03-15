@@ -49,8 +49,8 @@ def curlManipulation(nameOfESIndex):
 def oracleConnection():
 	es = Elasticsearch('http://localhost:9200')
 
-	USER = 'TRS_ADMIN'
-	PASS = 'H8Q5ZP9'
+	USER = '##############'
+	PASS = '##############'
 
 	dsn = '''
 	    (DESCRIPTION =
