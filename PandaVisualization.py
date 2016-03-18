@@ -35,12 +35,12 @@ def recusiveTree(tree, appendStr = '', appendList = []):
 def oracleConnection():
 	es = Elasticsearch('http://localhost:9200')
 
-	USER = 'TRS_ADMIN'
-	PASS = 'H8Q5ZP9'
+	USER = '##############'
+	PASS = '##############'
 
 	dsn = '''
 	    (DESCRIPTION =
-	        (ADDRESS = (PROTOCOL = TCP)(HOST = dbi00cnc-ptrs.rim.net)(PORT = 1521))
+	        (ADDRESS = (PROTOCOL = TCP)(HOST = ############################)(PORT = ####))
 	            (CONNECT_DATA =
 	                (SERVER = DEDICATED)
 	                    (SERVICE_NAME = PTRS)
