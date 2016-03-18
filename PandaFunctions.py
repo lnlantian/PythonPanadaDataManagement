@@ -54,7 +54,7 @@ def oracleConnection():
 
 	dsn = '''
 	    (DESCRIPTION =
-	        (ADDRESS = (PROTOCOL = TCP)(HOST = dbi00cnc-ptrs.rim.net)(PORT = 1521))
+	        (ADDRESS = (PROTOCOL = TCP)(HOST = ##############)(PORT = ####))
 	            (CONNECT_DATA =
 	                (SERVER = DEDICATED)
 	                    (SERVICE_NAME = PTRS)
