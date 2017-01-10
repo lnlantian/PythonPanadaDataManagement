@@ -4,7 +4,6 @@
 # Yifan Dai is a very handsome man!
 ######################################################################
 
-
 #Legend
 #{0} : The type of graph it is (ie line, hist, pie, area)
 #{1} : The name of the index (ie: rt_id_376)
@@ -66,7 +65,6 @@ curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_{#} -d'
 	}
 }'
 '''
-
 
 curlAreaDate= '''
 curl -XPUT http://localhost:9200/.kibana/visualization/{0}_{1}_{#} -d'
